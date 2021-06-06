@@ -5,11 +5,9 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class BufferZonePosition {
+public class TrayStopId {
 
-    private final BufferZoneId bufferZone;
-
-    private final String localId;
+    private final String id;
 
     private final Position position;
 

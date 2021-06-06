@@ -5,11 +5,9 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class LoadingAreaId {
+public class BufferRackId {
 
-    private final WarehouseId warehouse;
-
-    private final String localId;
+    private final String id;
 
     private final Position position;
 

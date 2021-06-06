@@ -5,10 +5,10 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class BufferZoneId {
+public class RobotId {
 
     private final String id;
 
-    private final Position position;
+    private final Integer type;
 
 }
