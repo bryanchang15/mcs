@@ -4,6 +4,7 @@ import com.luanguan.mcs.shared_kernel.BatteryModel;
 import com.luanguan.mcs.shared_kernel.Position;
 import com.luanguan.mcs.shared_kernel.WindingRollerName;
 
+import io.vavr.control.Try;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -12,14 +13,14 @@ public class WindingMachineService {
 
     private final WindingMachineRepository windingMachineRepository;
 
-    public WindingRoller findWindingRollerBy(Position windingMachinePosition, BatteryModel batteryModel, WindingRollerName rollerName) {
+    public Try<WindingRoller> findWindingRollerBy(Position windingMachinePosition, BatteryModel batteryModel,
+            WindingRollerName rollerName) {
 
-        WindingMachine machine = windingMachineRepository.findByPosition(windingMachinePosition)
-                .orElseThrow(() -> new IllegalArgumentException("No such winding machine"));
-        ElectrodeType electrodeType = ElectrodeType.getByRollerName(rollerName)
-                .orElseThrow(() -> new IllegalArgumentException("No such winding roller"));
-
-        return new WindingRoller(machine.windingMachineId(), machine.position, batteryModel, electrodeType);
+        return windingMachineRepository.findByPosition(windingMachinePosition)
+                .map(machine -> ElectrodeType.getByRollerName(rollerName)
+                        .map(electrodeType -> new WindingRoller(machine.windingMachineId(), machine.position,
+                                batteryModel, electrodeType)))
+                .getOrElse(Try.failure(new IllegalArgumentException("no such winding machine")));
     }
 
 }

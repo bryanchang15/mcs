@@ -1,12 +1,15 @@
 package com.luanguan.mcs.shared_kernel;
 
-import lombok.NonNull;
-import lombok.Value;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-@Value
-public class WindingRollerName {
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Getter
+public enum WindingRollerName {
 
-    @NonNull
-    String name;
+    A1("A1"),A2("A2"),C1("C1"),C2("C2");
+
+    private final String name;
 
 }

@@ -1,5 +1,7 @@
 package com.luanguan.mcs.mission.domain;
 
+import java.util.UUID;
+
 import lombok.NonNull;
 import lombok.Value;
 
@@ -7,6 +9,6 @@ import lombok.Value;
 public class MissionId {
 
     @NonNull
-    Long id;
+    UUID id;
 
 }

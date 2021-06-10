@@ -1,9 +1,8 @@
 package com.luanguan.mcs.winding_machine.domain;
 
-import java.util.Optional;
-
 import com.luanguan.mcs.shared_kernel.WindingRollerName;
 
+import io.vavr.control.Try;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,17 +11,30 @@ import lombok.Getter;
 @Getter
 public enum ElectrodeType {
 
-    PositiveLeft("A1"), PositiveRight("A2"), NegativeLeft("C1"), NegativeRight("C2");
+    PositiveLeft(0, WindingRollerName.A1),
+    PositiveRight(1, WindingRollerName.A2),
+    NegativeLeft(2, WindingRollerName.C1),
+    NegativeRight(3, WindingRollerName.C2);
 
-    private final String rollerName;
+    private final Integer value;
+    private final WindingRollerName rollerName;
 
-    public static Optional<ElectrodeType> getByRollerName(WindingRollerName rollerName) {
+    public static Try<ElectrodeType> getByRollerName(WindingRollerName rollerName) {
         for (ElectrodeType electrodeType : ElectrodeType.values()) {
-            if (rollerName.getName() == electrodeType.rollerName)
-                return Optional.of(electrodeType);
+            if (rollerName == electrodeType.rollerName)
+                return Try.success(electrodeType);
         }
 
-        return Optional.empty();
+        return Try.failure(new IllegalArgumentException("no such winding roller"));
+    }
+
+    public static ElectrodeType getByValue(Integer value) {
+        for (ElectrodeType electrodeType : ElectrodeType.values()) {
+            if (value == electrodeType.value)
+                return electrodeType;
+        }
+
+        throw new Error("ElectordeType value is changed which should not");
     }
 
 }
