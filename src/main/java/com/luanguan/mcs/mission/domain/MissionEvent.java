@@ -232,7 +232,7 @@ public interface MissionEvent extends DomainEvent {
         @NonNull
         Integer fullRollNum;
 
-        public BufferLocationId targeBufferLocationId() {
+        public BufferLocationId targetBufferLocationId() {
             return new BufferLocationId(getTargetBufferLocationId());
         }
 

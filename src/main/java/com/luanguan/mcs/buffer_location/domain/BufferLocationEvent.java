@@ -1,14 +1,13 @@
 package com.luanguan.mcs.buffer_location.domain;
 
-import java.time.Instant;
-import java.util.UUID;
-
 import com.luanguan.mcs.framework.domain.DomainEvent;
 import com.luanguan.mcs.shared_kernel.BatteryModel;
 import com.luanguan.mcs.winding_machine.domain.ElectrodeType;
-
 import lombok.NonNull;
 import lombok.Value;
+
+import java.time.Instant;
+import java.util.UUID;
 
 public interface BufferLocationEvent extends DomainEvent {
 
@@ -42,6 +41,7 @@ public interface BufferLocationEvent extends DomainEvent {
 
     @Value
     class BufferLocationLoaded implements BufferLocationEvent {
+
         @NonNull
         UUID eventId = UUID.randomUUID();
 
@@ -57,6 +57,12 @@ public interface BufferLocationEvent extends DomainEvent {
         @NonNull
         Integer electrodeTypeValue;
 
+        public static BufferLocationLoaded now(BufferLocationId bufferLocationId, BatteryModel batteryModel,
+                                               ElectrodeType electrodeType) {
+            return new BufferLocationLoaded(Instant.now(), bufferLocationId.getId(), batteryModel.getModelName(),
+                    electrodeType.getValue());
+        }
+
         public BatteryModel batteryModel() {
             return new BatteryModel(getBatteryModelName());
         }
@@ -65,11 +71,6 @@ public interface BufferLocationEvent extends DomainEvent {
             return ElectrodeType.getByValue(getElectrodeTypeValue());
         }
 
-        public static BufferLocationLoaded now(BufferLocationId bufferLocationId, BatteryModel batteryModel,
-                ElectrodeType electrodeType) {
-            return new BufferLocationLoaded(Instant.now(), bufferLocationId.getId(), batteryModel.getModelName(),
-                    electrodeType.getValue());
-        }
     }
 
 }

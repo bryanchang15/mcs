@@ -29,15 +29,18 @@ public class TrayLoadingBufferLocation extends BufferLocation {
     @NonNull
     Integer fullRollNum;
 
-    public FullRollLoadedBufferLocation handle(MissionCompleted missionCompleted) {
+    @Override
+    public BufferLocation handle(MissionCompleted missionCompleted) {
         return new FullRollLoadedBufferLocation(bufferLocationInformation, version, fullRollNum);
     }
 
-    public NoTrayBufferLocation handle(MissionFailed missionFailed) {
+    @Override
+    public BufferLocation handle(MissionFailed missionFailed) {
         return new NoTrayBufferLocation(bufferLocationInformation, version);
     }
 
-    public NoTrayBufferLocation handle(MissionPended missionPended) {
+    @Override
+    public BufferLocation handle(MissionPended missionPended) {
         return new NoTrayBufferLocation(bufferLocationInformation, version);
     }
 

@@ -1,15 +1,15 @@
 package com.luanguan.mcs.buffer_location.domain;
 
+import com.luanguan.mcs.framework.domain.DomainEvent;
 import com.luanguan.mcs.framework.domain.Version;
-import com.luanguan.mcs.mission.domain.MissionEvent.EmptyRollLoadingTaskScheduled;
-import com.luanguan.mcs.mission.domain.MissionEvent.TrayUnloadingTaskScheduled;
+import com.luanguan.mcs.mission.domain.MissionEvent.*;
 import com.luanguan.mcs.winding_machine.domain.ElectrodeType;
+import io.vavr.control.Either;
+import lombok.*;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.NonNull;
-import lombok.Value;
+import static io.vavr.API.$;
+import static io.vavr.API.Case;
+import static io.vavr.API.Match;
 
 @Value
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
@@ -28,13 +28,49 @@ public class EmptyRollLoadedBufferLocation extends BufferLocation {
     @NonNull
     Integer emptyRollNum;
 
-    public EmptyRollLoadingBufferLocation handle(EmptyRollLoadingTaskScheduled emptyRollLoadingTaskScheduled) {
-        return new EmptyRollLoadingBufferLocation(bufferLocationInformation, version,
-                emptyRollLoadingTaskScheduled.missionId(), emptyRollElectrodeType, emptyRollNum);
+    @Override
+    public Either<DomainEvent, BufferLocation> handle(FullRollLoadingTaskScheduled fullRollLoadingTaskScheduled) {
+        return Either.left(BufferLocationMisMatchedEvent.now(
+                bufferLocationId(),
+                fullRollLoadingTaskScheduled.missionId()
+        ));
     }
 
-    public NoTrayBufferLocation handle(TrayUnloadingTaskScheduled trayUnloadingTaskScheduled) {
-        return new NoTrayBufferLocation(bufferLocationInformation, version);
+    @Override
+    public Either<DomainEvent, BufferLocation> handle(EmptyRollLoadingTaskScheduled emptyRollLoadingTaskScheduled) {
+        return Match(canLoad()).of(
+                Case($(false), () -> Either.left(BufferLocationMisMatchedEvent.now(
+                        bufferLocationId(),
+                        emptyRollLoadingTaskScheduled.missionId()
+                ))),
+                Case($(true), () -> Either.right(new EmptyRollLoadingBufferLocation(
+                        bufferLocationInformation,
+                        version,
+                        emptyRollLoadingTaskScheduled.missionId(),
+                        emptyRollElectrodeType,
+                        emptyRollNum
+                )))
+        );
+    }
+
+    @Override
+    public Either<DomainEvent, BufferLocation> handle(TrayUnloadingTaskScheduled trayUnloadingTaskScheduled) {
+        return Either.right(new NoTrayBufferLocation(
+                bufferLocationInformation,
+                version
+        ));
+    }
+
+    @Override
+    public Either<DomainEvent, BufferLocation> handle(TrayLoadingTaskScheduled trayLoadingTaskScheduled) {
+        return Either.left(BufferLocationMisMatchedEvent.now(
+                bufferLocationId(),
+                trayLoadingTaskScheduled.missionId()
+        ));
+    }
+
+    private Boolean canLoad() {
+        return (this.emptyRollNum < this.maxRollNumCanLoad());
     }
 
 }

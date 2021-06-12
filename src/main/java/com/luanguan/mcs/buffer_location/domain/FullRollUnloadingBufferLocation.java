@@ -1,17 +1,13 @@
 package com.luanguan.mcs.buffer_location.domain;
 
 import com.luanguan.mcs.framework.domain.Version;
-import com.luanguan.mcs.mission.domain.MissionEvent.MissionCompleted;
-import com.luanguan.mcs.mission.domain.MissionEvent.MissionFailed;
-import com.luanguan.mcs.mission.domain.MissionEvent.MissionPended;
+import com.luanguan.mcs.mission.domain.MissionEvent.*;
 import com.luanguan.mcs.mission.domain.MissionId;
+import lombok.*;
 
-import io.vavr.control.Either;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.NonNull;
-import lombok.Value;
+import static io.vavr.API.$;
+import static io.vavr.API.Case;
+import static io.vavr.API.Match;
 
 @Value
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
@@ -25,24 +21,33 @@ public class FullRollUnloadingBufferLocation extends BufferLocation {
     Version version;
 
     @NonNull
-    MissionId byRollMission;
+    MissionId byMission;
 
     @NonNull
     Integer fullRollNum;
 
-    public Either<EmptyBufferLocation, FullRollLoadedBufferLocation> handle(MissionCompleted missionCompleted) {
-        if (1 == fullRollNum) {
-            return Either.left(new EmptyBufferLocation(bufferLocationInformation, version));
-        }
-
-        return Either.right(new FullRollLoadedBufferLocation(bufferLocationInformation, version, fullRollNum - 1));
+    @Override
+    public BufferLocation handle(MissionCompleted missionCompleted) {
+        return Match(fullRollNum).of(
+                Case($(1), () -> new EmptyBufferLocation(
+                        bufferLocationInformation,
+                        version
+                )),
+                Case($(), () -> new FullRollLoadedBufferLocation(
+                        bufferLocationInformation,
+                        version,
+                        fullRollNum - 1
+                ))
+        );
     }
 
-    public FullRollLoadedBufferLocation handle(MissionFailed missionFailed) {
+    @Override
+    public BufferLocation handle(MissionFailed missionFailed) {
         return new FullRollLoadedBufferLocation(bufferLocationInformation, version, fullRollNum);
     }
 
-    public FullRollLoadedBufferLocation handle(MissionPended missionPended) {
+    @Override
+    public BufferLocation handle(MissionPended missionPended) {
         return new FullRollLoadedBufferLocation(bufferLocationInformation, version, fullRollNum);
     }
 

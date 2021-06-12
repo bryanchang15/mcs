@@ -1,8 +1,10 @@
 package com.luanguan.mcs.buffer_location.domain;
 
+import com.luanguan.mcs.framework.domain.DomainEvent;
 import com.luanguan.mcs.framework.domain.Version;
 import com.luanguan.mcs.mission.domain.MissionEvent.*;
 
+import io.vavr.control.Either;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -20,13 +22,44 @@ public class EmptyBufferLocation extends BufferLocation {
     @NonNull
     Version version;
 
-    public EmptyRollLoadingBufferLocation handle(EmptyRollLoadingTaskScheduled emptyRollLoadingTaskScheduled) {
-        return new EmptyRollLoadingBufferLocation(bufferLocationInformation, version,
-                emptyRollLoadingTaskScheduled.missionId(), emptyRollLoadingTaskScheduled.electrodeType(), 1);
+    @Override
+    public Either<DomainEvent, BufferLocation> handle(
+            FullRollLoadingTaskScheduled fullRollLoadingTaskScheduled
+    ) {
+        return Either.left(BufferLocationMisMatchedEvent.now(
+                bufferLocationId(),
+                fullRollLoadingTaskScheduled.missionId()
+        ));
     }
 
-    public NoTrayBufferLocation handle(TrayUnloadingTaskScheduled trayUnloadingMissionScheduled) {
-        return new NoTrayBufferLocation(bufferLocationInformation, version);
+    @Override
+    public Either<DomainEvent, BufferLocation> handle(
+            EmptyRollLoadingTaskScheduled emptyRollLoadingTaskScheduled
+    ) {
+        return Either.right(new EmptyRollLoadingBufferLocation(
+                bufferLocationInformation,
+                version,
+                emptyRollLoadingTaskScheduled.missionId(),
+                emptyRollLoadingTaskScheduled.electrodeType(),
+                1
+        ));
+    }
+
+    @Override
+    public Either<DomainEvent, BufferLocation> handle(
+            TrayUnloadingTaskScheduled trayUnloadingMissionScheduled
+    ) {
+        return Either.right(new NoTrayBufferLocation(bufferLocationInformation, version));
+    }
+
+    @Override
+    public Either<DomainEvent, BufferLocation> handle(
+            TrayLoadingTaskScheduled trayLoadingMissionScheduled
+    ) {
+        return Either.left(BufferLocationMisMatchedEvent.now(
+                bufferLocationId(),
+                trayLoadingMissionScheduled.missionId()
+        ));
     }
 
 }

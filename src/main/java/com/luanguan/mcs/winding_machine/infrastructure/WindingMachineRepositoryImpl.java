@@ -6,6 +6,7 @@ import com.luanguan.mcs.shared_kernel.Position;
 import com.luanguan.mcs.winding_machine.domain.WindingMachine;
 import com.luanguan.mcs.winding_machine.domain.WindingMachineRepository;
 
+import io.vavr.control.Option;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import lombok.AccessLevel;
@@ -18,7 +19,7 @@ public class WindingMachineRepositoryImpl implements WindingMachineRepository {
 
 
     @Override
-    public Optional<WindingMachine> findByPosition(Position position) {
+    public Option<WindingMachine> findByPosition(Position position) {
         return jpaRepository.findByPositionId(position.getPositionId()).map(WindingMachineJpaEntity::toDomainModel);
     }
 }

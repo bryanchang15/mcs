@@ -10,7 +10,7 @@ import lombok.Value;
 @Value
 public class BufferLocationInformation {
 
-    private final Integer TRAY_CAPACITY = 2;
+    Integer TRAY_CAPACITY = 2;
 
     @NonNull
     BufferLocationId bufferLocationId;
