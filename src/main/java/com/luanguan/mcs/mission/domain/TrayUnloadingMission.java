@@ -4,7 +4,10 @@ import com.luanguan.mcs.buffer_location.domain.BufferLocationInformation;
 import com.luanguan.mcs.empty_roll_location.domain.EmptyRollLocationInformation;
 import com.luanguan.mcs.framework.domain.Version;
 import com.luanguan.mcs.winding_machine.domain.WindingRoller;
+import io.vavr.collection.List;
 import lombok.*;
+
+import java.util.ArrayList;
 
 @RequiredArgsConstructor
 @EqualsAndHashCode(of = "missionInformation")
@@ -27,7 +30,21 @@ public class TrayUnloadingMission implements Mission {
     @NonNull
     BufferLocationInformation sourceBufferLocationInformation;
 
+    @NonNull
+    List<EmptyRollLocationInformation> emptyRollLocationInformationList = List.empty();
+
+    @NonNull
+    List<RobotTaskId> scheduledEmptyRollLoadingRobotTasks = List.empty();
+
     @Setter
-    RobotTaskId scheduledRobotTask;
+    RobotTaskId scheduledUnloadingRobotTask;
+
+    public void addEmptyRollFrom(EmptyRollLocationInformation emptyRollLocationInformation) {
+        emptyRollLocationInformationList.append(emptyRollLocationInformation);
+    }
+
+    public void addScheduledEmptyRollLoadingTask(RobotTaskId robotTaskId) {
+        scheduledEmptyRollLoadingRobotTasks.append(robotTaskId);
+    }
 
 }

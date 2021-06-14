@@ -27,15 +27,24 @@ public class TrayReloadingMission implements Mission {
     @NonNull
     BufferLocationInformation sourceBufferLocationInformation;
 
-    List<EmptyRollLocationInformation> emptyRollLocationInformations;
+    @NonNull
+    List<EmptyRollLocationInformation> emptyRollLocationInformationList = List.empty();
 
-    @Setter
-    List<RobotTaskId> scheduledEmptyRollLoadingRobotTask;
+    @NonNull
+    List<RobotTaskId> scheduledEmptyRollLoadingRobotTasks = List.empty();
 
     @Setter
     RobotTaskId scheduledTrayUnloadingRobotTask;
 
     @Setter
     RobotTaskId scheduledTrayLoadingRobotTask;
+
+    public void addEmptyRollFrom(EmptyRollLocationInformation emptyRollLocationInformation) {
+       emptyRollLocationInformationList.append(emptyRollLocationInformation);
+    }
+
+    public void addScheduledEmptyRollLoadingTask(RobotTaskId robotTaskId) {
+        scheduledEmptyRollLoadingRobotTasks.append(robotTaskId);
+    }
 
 }
