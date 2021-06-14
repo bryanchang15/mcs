@@ -11,7 +11,7 @@ import static io.vavr.API.Case;
 import static io.vavr.API.Match;
 
 @Value
-@AllArgsConstructor(access = AccessLevel.PACKAGE)
+@AllArgsConstructor
 @EqualsAndHashCode(callSuper = false, of = "bufferLocationInformation")
 public class EmptyRollLoadingBufferLocation extends BufferLocation {
 

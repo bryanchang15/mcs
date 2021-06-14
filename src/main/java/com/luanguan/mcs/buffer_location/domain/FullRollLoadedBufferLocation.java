@@ -16,7 +16,7 @@ import static io.vavr.API.*;
 import static io.vavr.Predicates.is;
 
 @Value
-@AllArgsConstructor(access = AccessLevel.PACKAGE)
+@AllArgsConstructor
 @EqualsAndHashCode(callSuper = false, of = "bufferLocationInformation")
 public class FullRollLoadedBufferLocation extends BufferLocation {
 

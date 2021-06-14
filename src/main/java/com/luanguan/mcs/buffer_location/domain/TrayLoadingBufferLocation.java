@@ -13,7 +13,7 @@ import lombok.NonNull;
 import lombok.Value;
 
 @Value
-@AllArgsConstructor(access = AccessLevel.PACKAGE)
+@AllArgsConstructor
 @EqualsAndHashCode(callSuper = false, of = "bufferLocationInformation")
 public class TrayLoadingBufferLocation extends BufferLocation {
 

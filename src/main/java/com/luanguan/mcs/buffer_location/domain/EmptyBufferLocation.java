@@ -4,6 +4,9 @@ import com.luanguan.mcs.framework.domain.DomainEvent;
 import com.luanguan.mcs.framework.domain.Version;
 import com.luanguan.mcs.mission.domain.MissionEvent.*;
 
+import com.luanguan.mcs.shared_kernel.BatteryModel;
+import com.luanguan.mcs.shared_kernel.Position;
+import com.luanguan.mcs.winding_machine.domain.ElectrodeType;
 import io.vavr.control.Either;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -12,7 +15,7 @@ import lombok.NonNull;
 import lombok.Value;
 
 @Value
-@AllArgsConstructor(access = AccessLevel.PACKAGE)
+@AllArgsConstructor
 @EqualsAndHashCode(callSuper = false, of = "bufferLocationInformation")
 public class EmptyBufferLocation extends BufferLocation {
 
