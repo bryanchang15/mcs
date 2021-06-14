@@ -1,17 +1,18 @@
 package com.luanguan.mcs.empty_roll_location.domain;
 
 import com.luanguan.mcs.shared_kernel.Position;
-
 import lombok.NonNull;
 import lombok.Value;
 
 @Value
-public class EmptyRollLocationPosition {
+public class EmptyRollLocationInformation {
 
     @NonNull
-    Position rackPosition;
+    EmptyRollLocationId emptyRollLocationId;
 
     @NonNull
-    Position locationPosition;
+    Position emptyRollRackPosition;
 
+    @NonNull
+    Position emptyRollLocationPosition;
 }

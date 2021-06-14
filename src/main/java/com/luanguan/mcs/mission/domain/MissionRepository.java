@@ -1,9 +1,11 @@
 package com.luanguan.mcs.mission.domain;
 
+import io.vavr.control.Option;
+
 public interface MissionRepository {
 
-    Mission loadBy(MissionId missionId);
+    Option<Mission> findBy(MissionId missionId);
 
-    void save(Mission mission);
+    Mission save(Mission mission);
 
 }

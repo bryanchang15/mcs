@@ -70,7 +70,7 @@ public class EmptyRollLoadedBufferLocation extends BufferLocation {
     }
 
     private Boolean canLoad() {
-        return (this.emptyRollNum < this.maxRollNumCanLoad());
+        return (this.emptyRollNum < this.trayCapacity());
     }
 
 }

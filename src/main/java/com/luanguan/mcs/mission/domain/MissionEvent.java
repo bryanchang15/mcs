@@ -1,15 +1,14 @@
 package com.luanguan.mcs.mission.domain;
 
-import java.time.Instant;
-import java.util.UUID;
-
 import com.luanguan.mcs.buffer_location.domain.BufferLocationId;
 import com.luanguan.mcs.empty_roll_location.domain.EmptyRollLocationId;
 import com.luanguan.mcs.framework.domain.DomainEvent;
 import com.luanguan.mcs.winding_machine.domain.ElectrodeType;
-
 import lombok.NonNull;
 import lombok.Value;
+
+import java.time.Instant;
+import java.util.UUID;
 
 public interface MissionEvent extends DomainEvent {
 
@@ -95,18 +94,18 @@ public interface MissionEvent extends DomainEvent {
         @NonNull
         Integer electrodeTypeValue;
 
+        public static EmptyRollUnloadingTaskScheduled now(MissionId missionId,
+                                                          EmptyRollLocationId targetEmptyRollLocationId, ElectrodeType electrodeType) {
+            return new EmptyRollUnloadingTaskScheduled(Instant.now(), missionId.getId(),
+                    targetEmptyRollLocationId.getId(), electrodeType.getValue());
+        }
+
         public EmptyRollLocationId targeEmptyRollLocationId() {
             return new EmptyRollLocationId(getTargetEmptyRollLocationId());
         }
 
         public ElectrodeType electrodeType() {
             return ElectrodeType.getByValue(electrodeTypeValue);
-        }
-
-        public static EmptyRollUnloadingTaskScheduled now(MissionId missionId,
-                EmptyRollLocationId targetEmptyRollLocationId, ElectrodeType electrodeType) {
-            return new EmptyRollUnloadingTaskScheduled(Instant.now(), missionId.getId(),
-                    targetEmptyRollLocationId.getId(), electrodeType.getValue());
         }
 
     }
@@ -132,6 +131,13 @@ public interface MissionEvent extends DomainEvent {
         @NonNull
         Integer electrodeTypeValue;
 
+        public static EmptyRollLoadingTaskScheduled now(MissionId missionId,
+                                                        EmptyRollLocationId sourceEmptyRollLocationId, BufferLocationId targetBufferLocationId,
+                                                        ElectrodeType electrodeType) {
+            return new EmptyRollLoadingTaskScheduled(Instant.now(), missionId.getId(),
+                    sourceEmptyRollLocationId.getId(), targetBufferLocationId.getId(), electrodeType.getValue());
+        }
+
         public EmptyRollLocationId sourceEmptyRollLocationId() {
             return new EmptyRollLocationId(getSourceEmptyRollLocationId());
         }
@@ -142,13 +148,6 @@ public interface MissionEvent extends DomainEvent {
 
         public ElectrodeType electrodeType() {
             return ElectrodeType.getByValue(electrodeTypeValue);
-        }
-
-        public static EmptyRollLoadingTaskScheduled now(MissionId missionId,
-                EmptyRollLocationId sourceEmptyRollLocationId, BufferLocationId targetBufferLocationId,
-                ElectrodeType electrodeType) {
-            return new EmptyRollLoadingTaskScheduled(Instant.now(), missionId.getId(),
-                    sourceEmptyRollLocationId.getId(), targetBufferLocationId.getId(), electrodeType.getValue());
         }
 
     }
@@ -168,14 +167,14 @@ public interface MissionEvent extends DomainEvent {
         @NonNull
         UUID sourceBufferLocationId;
 
-        public BufferLocationId sourceBufferLocationId() {
-            return new BufferLocationId(getSourceBufferLocationId());
-        }
-
         public static FullRollLoadingTaskScheduled now(MissionId missionId,
-                BufferLocationId sourceBufferLocationId) {
+                                                       BufferLocationId sourceBufferLocationId) {
             return new FullRollLoadingTaskScheduled(Instant.now(), missionId.getId(),
                     sourceBufferLocationId.getId());
+        }
+
+        public BufferLocationId sourceBufferLocationId() {
+            return new BufferLocationId(getSourceBufferLocationId());
         }
 
     }
@@ -198,18 +197,18 @@ public interface MissionEvent extends DomainEvent {
         @NonNull
         Integer electrodeTypeValue;
 
+        public static TrayUnloadingTaskScheduled now(MissionId missionId, BufferLocationId sourceBufferLocationId,
+                                                     ElectrodeType electrodeType) {
+            return new TrayUnloadingTaskScheduled(Instant.now(), missionId.getId(), sourceBufferLocationId.getId(),
+                    electrodeType.getValue());
+        }
+
         public BufferLocationId sourceBufferLocationId() {
             return new BufferLocationId(getSourceBufferLocationId());
         }
 
         public ElectrodeType electrodeType() {
             return ElectrodeType.getByValue(electrodeTypeValue);
-        }
-
-        public static TrayUnloadingTaskScheduled now(MissionId missionId, BufferLocationId sourceBufferLocationId,
-                ElectrodeType electrodeType) {
-            return new TrayUnloadingTaskScheduled(Instant.now(), missionId.getId(), sourceBufferLocationId.getId(),
-                    electrodeType.getValue());
         }
 
     }
@@ -232,14 +231,14 @@ public interface MissionEvent extends DomainEvent {
         @NonNull
         Integer fullRollNum;
 
-        public BufferLocationId targetBufferLocationId() {
-            return new BufferLocationId(getTargetBufferLocationId());
-        }
-
         public static TrayLoadingTaskScheduled now(MissionId missionId, BufferLocationId targetBufferLocationId,
-                Integer fullRollNum) {
+                                                   Integer fullRollNum) {
             return new TrayLoadingTaskScheduled(Instant.now(), missionId.getId(), targetBufferLocationId.getId(),
                     fullRollNum);
+        }
+
+        public BufferLocationId targetBufferLocationId() {
+            return new BufferLocationId(getTargetBufferLocationId());
         }
 
     }

@@ -26,8 +26,8 @@ public abstract class BufferLocation {
         return getBufferLocationInformation().getFullRollElectrodeType();
     }
 
-    public Integer maxRollNumCanLoad() {
-        return getBufferLocationInformation().getMaxRollNumCanLoad();
+    public Integer trayCapacity() {
+        return getBufferLocationInformation().getTrayCapacity();
     }
 
     public abstract BufferLocationInformation getBufferLocationInformation();

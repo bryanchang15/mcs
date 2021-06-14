@@ -1,19 +1,20 @@
 package com.luanguan.mcs.mission.domain;
 
 import com.luanguan.mcs.framework.domain.Version;
+import io.vavr.control.Option;
 
 public interface Mission {
-
-    MissionInformation getMissionInformation();
-
-    Version getVersion();
 
     default MissionId missionId() {
         return getMissionInformation().getMissionId();
     }
 
-    default MissionType missionType() {
-        return getMissionInformation().getMissionType();
-    }
+    MissionInformation getMissionInformation();
+
+    Version getVersion();
+
+    MissionState getMissionState();
+
+    Option<MissionPendingReason> getMissionPendingReason();
 
 }

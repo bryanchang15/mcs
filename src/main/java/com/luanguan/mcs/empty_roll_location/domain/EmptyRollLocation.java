@@ -1,12 +1,23 @@
 package com.luanguan.mcs.empty_roll_location.domain;
 
 import com.luanguan.mcs.framework.domain.Version;
+import com.luanguan.mcs.shared_kernel.Position;
 
 public interface EmptyRollLocation {
 
-    EmptyRollLocationId getEmptyRollLocationId();
+    default EmptyRollLocationId emptyRollLocationId() {
+        return getEmptyRollLocationInformation().getEmptyRollLocationId();
+    }
 
-    EmptyRollLocationPosition getEmptyRollLocationPosition();
+    default Position emptyRollRackPosition() {
+        return getEmptyRollLocationInformation().getEmptyRollRackPosition();
+    }
+
+    default Position emptyRollLocationPosition() {
+        return getEmptyRollLocationInformation().getEmptyRollLocationPosition();
+    }
+
+    EmptyRollLocationInformation getEmptyRollLocationInformation();
 
     Version getVersion();
 

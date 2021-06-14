@@ -10,7 +10,8 @@ import lombok.Value;
 @Value
 public class BufferLocationInformation {
 
-    Integer TRAY_CAPACITY = 2;
+    @NonNull
+    Integer TrayCapacity = 2;
 
     @NonNull
     BufferLocationId bufferLocationId;
@@ -23,9 +24,5 @@ public class BufferLocationInformation {
 
     @NonNull
     ElectrodeType fullRollElectrodeType;
-
-    public Integer getMaxRollNumCanLoad() {
-        return TRAY_CAPACITY;
-    }
 
 }
