@@ -8,10 +8,11 @@ import lombok.*;
 public enum MissionState {
 
     Created(0),
-    Pending(1),
+    Ready(1),
     Executing(2),
-    Failed(3),
-    Completed(4);
+    Completed(3),
+    Pending(4),
+    Failed(5);
 
     private final Integer value;
 

@@ -5,6 +5,7 @@ import lombok.Value;
 
 public enum MissionPendingReason {
 
+    NotPending,
     NoAvailableBufferLocation,
     NoAvailableEmptyRollLocation,
     NoAvailableRobot;

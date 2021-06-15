@@ -23,6 +23,20 @@ public interface MissionEvent extends DomainEvent {
     }
 
     @Value
+    class MissionCreated implements MissionEvent {
+
+        @NonNull UUID eventId = UUID.randomUUID();
+
+        @NonNull Instant when;
+
+        @NonNull UUID missionId;
+
+        public static MissionCreated now(MissionId missionId) {
+            return new MissionCreated(Instant.now(), missionId.getId());
+        }
+    }
+
+    @Value
     class MissionFailed implements MissionEvent {
 
         @NonNull

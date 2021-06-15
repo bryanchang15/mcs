@@ -2,34 +2,49 @@ package com.luanguan.mcs.mission.domain;
 
 import com.luanguan.mcs.empty_roll_location.domain.EmptyRollLocationInformation;
 import com.luanguan.mcs.framework.domain.Version;
+import com.luanguan.mcs.mission.application.EmptyRollUnloadingRobotTaskRequest;
 import com.luanguan.mcs.winding_machine.domain.WindingRoller;
-import lombok.*;
+import lombok.Getter;
+import lombok.NonNull;
 
-@RequiredArgsConstructor
-@EqualsAndHashCode(of = "missionInformation")
 @Getter
-public class EmptyRollUnloadingMission implements Mission {
+public class EmptyRollUnloadingMission extends Mission {
 
-    @NonNull
-    MissionInformation missionInformation;
+    @NonNull private final WindingRoller sourceWindingRoller;
 
-    @NonNull
-    Version version;
+    private EmptyRollLocationInformation targetEmptyRollLocationInformation = null;
 
-    @NonNull
-    @Setter
-    MissionState missionState;
+    private RobotTaskId scheduledRobotTask = null;
 
-    @Setter
-    MissionPendingReason missionPendingReason;
+    public EmptyRollUnloadingMission(
+            @NonNull MissionInformation missionInformation,
+            @NonNull Version version,
+            @NonNull MissionState missionState,
+            @NonNull MissionPendingReason missionPendingReason,
+            @NonNull WindingRoller sourceWindingRoller
+    ) {
+        super(missionInformation, version, missionState, missionPendingReason);
+        this.sourceWindingRoller = sourceWindingRoller;
+    }
 
-    @NonNull
-    WindingRoller sourceWindingRoller;
+    public void assignOf(EmptyRollLocationInformation emptyRollLocationInformation) {
+        super.ready();
+        this.targetEmptyRollLocationInformation = emptyRollLocationInformation;
+    }
 
-    @Setter
-    EmptyRollLocationInformation targetEmptyRollLocationInformation;
+    public void executeBy(RobotTaskId scheduledRobotTask) {
+        super.execute();
+        this.scheduledRobotTask = scheduledRobotTask;
+    }
 
-    @Setter
-    RobotTaskId scheduledRobotTask;
+    public EmptyRollUnloadingRobotTaskRequest getEmptyRollUnloadingRobotTaskRequest() {
+        return new EmptyRollUnloadingRobotTaskRequest(
+                sourceWindingRoller.getWindingMachinePosition(),
+                sourceWindingRoller.getElectrodeType().getRollerName(),
+                sourceWindingRoller.getBatteryModel(),
+                targetEmptyRollLocationInformation.getEmptyRollRackPosition(),
+                targetEmptyRollLocationInformation.getEmptyRollLocationPosition()
+        );
+    }
 
 }

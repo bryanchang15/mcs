@@ -3,40 +3,51 @@ package com.luanguan.mcs.mission.domain;
 import com.luanguan.mcs.buffer_location.domain.BufferLocationInformation;
 import com.luanguan.mcs.empty_roll_location.domain.EmptyRollLocationInformation;
 import com.luanguan.mcs.framework.domain.Version;
+import com.luanguan.mcs.shared_kernel.TrayPosition;
 import com.luanguan.mcs.winding_machine.domain.WindingRoller;
 import lombok.*;
 
-@RequiredArgsConstructor
-@EqualsAndHashCode(of = "missionInformation")
 @Getter
-public class RollReloadingMission implements Mission {
+public class RollReloadingMission extends Mission {
 
-    @NonNull
-    MissionInformation missionInformation;
+    @NonNull private final WindingRoller windingRoller;
 
-    @NonNull
-    Version version;
+    private EmptyRollLocationInformation emptyRollLocationInformation = null;
 
-    @NonNull
-    @Setter
-    MissionState missionState;
+    private BufferLocationInformation bufferLocationInformation = null;
 
-    @Setter
-    MissionPendingReason missionPendingReason;
+    private TrayPosition trayPosition = null;
 
-    @NonNull
-    WindingRoller windingRoller;
+    private RobotTaskId scheduledUnloadingRobotTask = null;
 
-    @Setter
-    EmptyRollLocationInformation targetEmptyRollLocationInformation;
+    private RobotTaskId scheduledLoadingRobotTask = null;
 
-    @Setter
-    BufferLocationInformation sourceBufferLocationInformation;
+    public RollReloadingMission(
+            @NonNull MissionInformation missionInformation,
+            @NonNull Version version,
+            @NonNull MissionState missionState,
+            @NonNull MissionPendingReason missionPendingReason,
+            @NonNull WindingRoller windingRoller
+    ) {
+        super(missionInformation, version, missionState, missionPendingReason);
+        this.windingRoller = windingRoller;
+    }
 
-    @Setter
-    RobotTaskId scheduledUnloadingRobotTask;
+    public void assignOf(
+            EmptyRollLocationInformation emptyRollLocationInformation,
+            BufferLocationInformation bufferLocationInformation,
+            TrayPosition trayPosition
+    ) {
+        super.ready();
+        this.emptyRollLocationInformation = emptyRollLocationInformation;
+        this.bufferLocationInformation = bufferLocationInformation;
+        this.trayPosition = trayPosition;
+    }
 
-    @Setter
-    RobotTaskId scheduledLoadingRobotTask;
+    public void executeBy(RobotTaskId emptyRollUnloadingTask, RobotTaskId fullRollLoadingTask) {
+        super.execute();
+        this.scheduledLoadingRobotTask = fullRollLoadingTask;
+        this.scheduledUnloadingRobotTask = emptyRollUnloadingTask;
+    }
 
 }
