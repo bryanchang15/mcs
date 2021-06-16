@@ -15,7 +15,11 @@ public class FindWindingRoller implements ApplicationService {
 
     private final WindingMachineService windingMachineService;
 
-    Try<WindingRoller> findBy(Position windingMachinePosition, BatteryModel batteryModel, WindingRollerName rollerName) {
+    public Try<WindingRoller> findBy(
+            Position windingMachinePosition,
+            BatteryModel batteryModel,
+            WindingRollerName rollerName
+    ) {
         return windingMachineService.findWindingRollerBy(windingMachinePosition, batteryModel, rollerName);
     }
 

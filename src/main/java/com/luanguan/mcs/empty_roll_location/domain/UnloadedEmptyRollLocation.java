@@ -11,14 +11,11 @@ import lombok.Value;
 
 @Value
 @AllArgsConstructor
-@EqualsAndHashCode(of = "emptyRollLocationId")
+@EqualsAndHashCode(of = "emptyRollLocationInformation")
 public class UnloadedEmptyRollLocation implements EmptyRollLocation {
 
     @NonNull
-    EmptyRollLocationId emptyRollLocationId;
-
-    @NonNull
-    EmptyRollLocationPosition emptyRollLocationPosition;
+    EmptyRollLocationInformation emptyRollLocationInformation;
 
     @NonNull
     Version version;

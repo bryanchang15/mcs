@@ -5,6 +5,7 @@ import com.luanguan.mcs.framework.domain.Version;
 import com.luanguan.mcs.mission.domain.MissionEvent;
 import com.luanguan.mcs.mission.domain.MissionEvent.*;
 
+import com.luanguan.mcs.shared_kernel.TrayPosition;
 import io.vavr.control.Either;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -28,6 +29,13 @@ public class FullRollLoadedBufferLocation extends BufferLocation {
 
     @NonNull
     Integer fullRollNum;
+
+    public TrayPosition getTrayPosition() {
+        return Match(fullRollNum).of(
+                Case($(2), () -> TrayPosition.Outer),
+                Case($(1), () -> TrayPosition.Inner)
+        );
+    }
 
     @Override
     public Either<DomainEvent, BufferLocation> handle(FullRollLoadingTaskScheduled fullRollLoadingTaskScheduled) {

@@ -6,7 +6,6 @@ import lombok.Value;
 @Value
 public class BatteryModel {
 
-    @NonNull
-    String modelName;
+    @NonNull String modelName;
 
 }

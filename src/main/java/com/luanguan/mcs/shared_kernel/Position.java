@@ -6,7 +6,6 @@ import lombok.Value;
 @Value
 public class Position {
 
-    @NonNull
-    String positionId;
+    @NonNull String positionId;
 
 }

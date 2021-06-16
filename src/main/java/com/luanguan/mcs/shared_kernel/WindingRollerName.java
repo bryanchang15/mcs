@@ -12,4 +12,14 @@ public enum WindingRollerName {
 
     private final String name;
 
+    public static WindingRollerName getByName(String name) {
+        for (WindingRollerName rollerName : WindingRollerName.values()) {
+            if (name.equalsIgnoreCase(rollerName.name)) {
+                return rollerName;
+            }
+        }
+
+        return null;
+    }
+
 }

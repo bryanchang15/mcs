@@ -9,22 +9,18 @@ import static io.vavr.API.$;
 import static io.vavr.API.Case;
 import static io.vavr.API.Match;
 
-@RequiredArgsConstructor
+@AllArgsConstructor
 @Getter
-@EqualsAndHashCode(of = "missionInformation")
+@EqualsAndHashCode(of = "missionId")
 public abstract class Mission {
 
-    @NonNull private final MissionInformation missionInformation;
+    @NonNull private final MissionId missionId;
 
     @NonNull private final Version version;
 
     @NonNull private MissionState missionState;
 
-    @NonNull private MissionPendingReason missionPendingReason;
-
-    public MissionId missionId() {
-        return getMissionInformation().getMissionId();
-    }
+    private MissionPendingReason missionPendingReason;
 
     public Option<MissionPendingReason> getMissionPendingReason() {
         return Match(missionState).of(
