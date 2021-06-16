@@ -30,7 +30,7 @@ public class FullRollLoadedBufferLocation extends BufferLocation {
     @NonNull
     Integer fullRollNum;
 
-    public TrayPosition getTrayPosition() {
+    public TrayPosition getTargetTrayPosition() {
         return Match(fullRollNum).of(
                 Case($(2), () -> TrayPosition.Outer),
                 Case($(1), () -> TrayPosition.Inner)

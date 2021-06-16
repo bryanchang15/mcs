@@ -24,7 +24,7 @@ public class WindingRollerUnloadingMission extends Mission {
             MissionPendingReason missionPendingReason,
             @NonNull WindingRoller sourceWindingRoller
     ) {
-        super(missionId, version, missionState, missionPendingReason);
+        super(missionId, version, missionState, missionPendingReason, null);
         this.sourceWindingRoller = sourceWindingRoller;
     }
 

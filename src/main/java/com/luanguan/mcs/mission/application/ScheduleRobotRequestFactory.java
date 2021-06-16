@@ -30,7 +30,7 @@ public class ScheduleRobotRequestFactory {
     ) {
         return new ScheduleRobotWindingRollerLoadingRequest(
                 sourceBufferLocation.bufferLocationPosition(),
-                sourceBufferLocation.getTrayPosition(),
+                sourceBufferLocation.getTargetTrayPosition(),
                 mission.getTargetWindingRoller().getWindingMachinePosition(),
                 mission.getTargetWindingRoller().getElectrodeType().getRollerName(),
                 mission.getTargetWindingRoller().getBatteryModel()

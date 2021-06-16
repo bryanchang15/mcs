@@ -8,7 +8,6 @@ import lombok.Value;
 @Value
 public class BufferLocationId {
 
-    @NonNull
-    UUID id;
+    @NonNull UUID id;
 
 }

@@ -22,6 +22,8 @@ public abstract class Mission {
 
     private MissionPendingReason missionPendingReason;
 
+    private MissionId preMissionId;
+
     public Option<MissionPendingReason> getMissionPendingReason() {
         return Match(missionState).of(
                 Case($(Pending), () -> Option.some(missionPendingReason)),

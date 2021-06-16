@@ -38,10 +38,6 @@ public abstract class BufferLocation {
         return this;
     }
 
-    public BufferLocation handle(MissionEvent.MissionPended missionPended) {
-        return this;
-    }
-
     public BufferLocation handle(MissionEvent.MissionFailed missionFailed) {
         return this;
     }

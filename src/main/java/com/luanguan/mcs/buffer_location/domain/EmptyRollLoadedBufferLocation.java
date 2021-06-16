@@ -3,6 +3,7 @@ package com.luanguan.mcs.buffer_location.domain;
 import com.luanguan.mcs.framework.domain.DomainEvent;
 import com.luanguan.mcs.framework.domain.Version;
 import com.luanguan.mcs.mission.domain.MissionEvent.*;
+import com.luanguan.mcs.shared_kernel.TrayPosition;
 import com.luanguan.mcs.winding_machine.domain.ElectrodeType;
 import io.vavr.control.Either;
 import lombok.*;
@@ -27,6 +28,10 @@ public class EmptyRollLoadedBufferLocation extends BufferLocation {
 
     @NonNull
     Integer emptyRollNum;
+
+    public TrayPosition getTargetTrayPosition() {
+        return TrayPosition.Outer;
+    }
 
     @Override
     public Either<DomainEvent, BufferLocation> handle(FullRollLoadingTaskScheduled fullRollLoadingTaskScheduled) {

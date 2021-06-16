@@ -21,9 +21,10 @@ public class WindingRollerLoadingMission extends Mission {
             @NonNull Version version,
             @NonNull MissionState missionState,
             MissionPendingReason missionPendingReason,
+            MissionId preMissionId,
             @NonNull WindingRoller targetWindingRoller
     ) {
-        super(missionId, version, missionState, missionPendingReason);
+        super(missionId, version, missionState, missionPendingReason, preMissionId);
         this.targetWindingRoller = targetWindingRoller;
     }
 

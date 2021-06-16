@@ -42,12 +42,6 @@ public class MissionEventHandler {
                                 )
                         )
                 ));
-}
-
-    public void handle(MissionPended missionPended) {
-        bufferLocationRepository.findBy(missionPended.missionId())
-                .map(bufferLocation -> bufferLocation.handle(missionPended))
-                .map(this::saveBufferLocation);
     }
 
     public void handle(MissionFailed missionFailed) {

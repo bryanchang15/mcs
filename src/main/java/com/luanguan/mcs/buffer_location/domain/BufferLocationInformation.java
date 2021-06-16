@@ -10,19 +10,14 @@ import lombok.Value;
 @Value
 public class BufferLocationInformation {
 
-    @NonNull
-    Integer TrayCapacity = 2;
+    @NonNull Integer TrayCapacity = 2;
 
-    @NonNull
-    BufferLocationId bufferLocationId;
+    @NonNull BufferLocationId bufferLocationId;
 
-    @NonNull
-    Position bufferLocationPosition;
+    @NonNull Position bufferLocationPosition;
 
-    @NonNull
-    BatteryModel bufferBatteryModel;
+    @NonNull BatteryModel bufferBatteryModel;
 
-    @NonNull
-    ElectrodeType fullRollElectrodeType;
+    @NonNull ElectrodeType fullRollElectrodeType;
 
 }

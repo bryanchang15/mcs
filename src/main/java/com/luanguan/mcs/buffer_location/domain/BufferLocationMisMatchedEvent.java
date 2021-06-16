@@ -11,17 +11,13 @@ import java.util.UUID;
 @Value
 public class BufferLocationMisMatchedEvent implements DomainEvent {
 
-    @NonNull
-    UUID eventId = UUID.randomUUID();
+    @NonNull UUID eventId = UUID.randomUUID();
 
-    @NonNull
-    Instant when;
+    @NonNull Instant when;
 
-    @NonNull
-    UUID bufferLocationId;
+    @NonNull UUID bufferLocationId;
 
-    @NonNull
-    UUID missionId;
+    @NonNull UUID missionId;
 
     public BufferLocationId bufferLocationId() {
         return new BufferLocationId(getBufferLocationId());

@@ -29,6 +29,7 @@ public class CreateWindingRollerLoadingMission {
                     Version.zero(),
                     MissionState.Created,
                     null,
+                    null,
                     windingRoller);
             missionRepository.save(mission);
             domainEventRepository.publish(MissionCreated.now(mission.getMissionId()));

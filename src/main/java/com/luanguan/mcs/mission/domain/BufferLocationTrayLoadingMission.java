@@ -19,9 +19,10 @@ public class BufferLocationTrayLoadingMission extends Mission {
             @NonNull Version version,
             @NonNull MissionState missionState,
             MissionPendingReason missionPendingReason,
+            MissionId preMissionId,
             @NonNull BufferLocationId targetBufferLocationId
     ) {
-        super(missionId, version, missionState, missionPendingReason);
+        super(missionId, version, missionState, missionPendingReason, preMissionId);
         this.targetBufferLocationId = targetBufferLocationId;
     }
 
