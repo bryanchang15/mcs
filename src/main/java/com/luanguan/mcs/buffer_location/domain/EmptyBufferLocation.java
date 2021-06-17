@@ -5,9 +5,7 @@ import com.luanguan.mcs.framework.domain.Version;
 import com.luanguan.mcs.mission.domain.MissionEvent.*;
 
 import com.luanguan.mcs.shared_kernel.*;
-import com.luanguan.mcs.winding_machine.domain.ElectrodeType;
 import io.vavr.control.Either;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
@@ -30,23 +28,23 @@ public class EmptyBufferLocation extends BufferLocation {
 
     @Override
     public Either<DomainEvent, BufferLocation> handle(
-            FullRollLoadingTaskScheduled fullRollLoadingTaskScheduled
+            WindingRollerLoadingMissionScheduled windingRollerLoadingMissionScheduled
     ) {
         return Either.left(BufferLocationMisMatchedEvent.now(
                 bufferLocationId(),
-                fullRollLoadingTaskScheduled.missionId()
+                windingRollerLoadingMissionScheduled.missionId()
         ));
     }
 
     @Override
     public Either<DomainEvent, BufferLocation> handle(
-            EmptyRollLoadingTaskScheduled emptyRollLoadingTaskScheduled
+            BufferLocationEmptyRollLoadingMissionScheduled bufferLocationEmptyRollLoadingMissionScheduled
     ) {
         return Either.right(new EmptyRollLoadingBufferLocation(
                 bufferLocationInformation,
                 version,
-                emptyRollLoadingTaskScheduled.missionId(),
-                emptyRollLoadingTaskScheduled.electrodeType(),
+                bufferLocationEmptyRollLoadingMissionScheduled.missionId(),
+                bufferLocationEmptyRollLoadingMissionScheduled.electrodeType(),
                 1
         ));
     }

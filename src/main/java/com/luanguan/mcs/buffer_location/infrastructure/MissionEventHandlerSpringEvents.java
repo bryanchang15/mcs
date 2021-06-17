@@ -26,13 +26,13 @@ public class MissionEventHandlerSpringEvents {
     }
 
     @EventListener
-    public void handle(FullRollLoadingTaskScheduled fullRollLoadingTaskScheduled) {
-        missionEventHandler.handle(fullRollLoadingTaskScheduled);
+    public void handle(WindingRollerLoadingMissionScheduled windingRollerLoadingMissionScheduled) {
+        missionEventHandler.handle(windingRollerLoadingMissionScheduled);
     }
 
     @EventListener
-    public void handle(EmptyRollLoadingTaskScheduled emptyRollLoadingTaskScheduled) {
-        missionEventHandler.handle(emptyRollLoadingTaskScheduled);
+    public void handle(BufferLocationEmptyRollLoadingMissionScheduled bufferLocationEmptyRollLoadingMissionScheduled) {
+        missionEventHandler.handle(bufferLocationEmptyRollLoadingMissionScheduled);
     }
 
     @EventListener

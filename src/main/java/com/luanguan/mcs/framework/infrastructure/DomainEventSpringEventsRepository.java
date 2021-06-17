@@ -13,8 +13,9 @@ public class DomainEventSpringEventsRepository implements DomainEventRepository 
     private final ApplicationEventPublisher applicationEventPublisher;
 
     @Override
-    public void publish(DomainEvent event) {
+    public DomainEvent publish(DomainEvent event) {
         applicationEventPublisher.publishEvent(event);
+        return event;
     }
 
 }

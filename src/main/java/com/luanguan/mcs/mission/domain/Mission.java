@@ -1,5 +1,6 @@
 package com.luanguan.mcs.mission.domain;
 
+import com.luanguan.mcs.external.robot.application.RobotTaskId;
 import com.luanguan.mcs.framework.domain.Version;
 import io.vavr.control.Option;
 import lombok.*;
@@ -22,34 +23,59 @@ public abstract class Mission {
 
     private MissionPendingReason missionPendingReason;
 
+    private RobotTaskId scheduledRobotTaskId;
+
     private MissionId preMissionId;
 
     public Option<MissionPendingReason> getMissionPendingReason() {
-        return Match(missionState).of(
-                Case($(Pending), () -> Option.some(missionPendingReason)),
+        return Match(this.missionState).of(
+                Case($(Pending), () -> Option.of(this.missionPendingReason)),
                 Case($(), Option::none)
         );
     }
 
-    void ready() {
-        this.missionState = Ready;
+    public Option<RobotTaskId> getScheduledRobotTaskId() {
+        if (this.scheduledRobotTaskId == null) {
+            return Option.none();
+        }
+
+        return Option.of(this.scheduledRobotTaskId);
     }
 
-    public void pendBy(MissionPendingReason missionPendingReason) {
+    public Option<MissionId> getPreMissionId() {
+        if (this.preMissionId == null) {
+            return Option.none();
+        }
+
+        return Option.of(this.preMissionId);
+    }
+
+    Mission becomeReady() {
+        this.missionState = Ready;
+        return this;
+    }
+
+    public Mission pendBy(MissionPendingReason missionPendingReason) {
         this.missionState = Pending;
         this.missionPendingReason = missionPendingReason;
+
+        return this;
     }
 
-    void execute() {
+    public Mission executeBy(RobotTaskId scheduledRobotTaskId) {
         this.missionState = Executing;
+        this.scheduledRobotTaskId = scheduledRobotTaskId;
+        return this;
     }
 
-    void complete() {
+    public Mission complete() {
         this.missionState = Completed;
+        return this;
     }
 
-    void fail() {
+    public Mission fail() {
         this.missionState = Failed;
+        return this;
     }
 
 }

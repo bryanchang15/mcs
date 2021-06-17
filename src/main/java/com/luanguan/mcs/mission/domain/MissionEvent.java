@@ -91,7 +91,7 @@ public interface MissionEvent extends DomainEvent {
     }
 
     @Value
-    class EmptyRollUnloadingTaskScheduled implements MissionEvent {
+    class WindingRollerUnloadingMissionScheduled implements MissionEvent {
 
         @NonNull
         UUID eventId = UUID.randomUUID();
@@ -108,13 +108,16 @@ public interface MissionEvent extends DomainEvent {
         @NonNull
         Integer electrodeTypeValue;
 
-        public static EmptyRollUnloadingTaskScheduled now(MissionId missionId,
-                                                          EmptyRollLocationId targetEmptyRollLocationId, ElectrodeType electrodeType) {
-            return new EmptyRollUnloadingTaskScheduled(Instant.now(), missionId.getId(),
+        public static WindingRollerUnloadingMissionScheduled now(
+                MissionId missionId,
+                EmptyRollLocationId targetEmptyRollLocationId,
+                ElectrodeType electrodeType
+        ) {
+            return new WindingRollerUnloadingMissionScheduled(Instant.now(), missionId.getId(),
                     targetEmptyRollLocationId.getId(), electrodeType.getValue());
         }
 
-        public EmptyRollLocationId targeEmptyRollLocationId() {
+        public EmptyRollLocationId targetEmptyRollLocationId() {
             return new EmptyRollLocationId(getTargetEmptyRollLocationId());
         }
 
@@ -125,7 +128,7 @@ public interface MissionEvent extends DomainEvent {
     }
 
     @Value
-    class EmptyRollLoadingTaskScheduled implements MissionEvent {
+    class BufferLocationEmptyRollLoadingMissionScheduled implements MissionEvent {
 
         @NonNull
         UUID eventId = UUID.randomUUID();
@@ -145,10 +148,10 @@ public interface MissionEvent extends DomainEvent {
         @NonNull
         Integer electrodeTypeValue;
 
-        public static EmptyRollLoadingTaskScheduled now(MissionId missionId,
-                                                        EmptyRollLocationId sourceEmptyRollLocationId, BufferLocationId targetBufferLocationId,
-                                                        ElectrodeType electrodeType) {
-            return new EmptyRollLoadingTaskScheduled(Instant.now(), missionId.getId(),
+        public static BufferLocationEmptyRollLoadingMissionScheduled now(MissionId missionId,
+                                                                         EmptyRollLocationId sourceEmptyRollLocationId, BufferLocationId targetBufferLocationId,
+                                                                         ElectrodeType electrodeType) {
+            return new BufferLocationEmptyRollLoadingMissionScheduled(Instant.now(), missionId.getId(),
                     sourceEmptyRollLocationId.getId(), targetBufferLocationId.getId(), electrodeType.getValue());
         }
 
@@ -167,7 +170,7 @@ public interface MissionEvent extends DomainEvent {
     }
 
     @Value
-    class FullRollLoadingTaskScheduled implements MissionEvent {
+    class WindingRollerLoadingMissionScheduled implements MissionEvent {
 
         @NonNull
         UUID eventId = UUID.randomUUID();
@@ -181,9 +184,9 @@ public interface MissionEvent extends DomainEvent {
         @NonNull
         UUID sourceBufferLocationId;
 
-        public static FullRollLoadingTaskScheduled now(MissionId missionId,
-                                                       BufferLocationId sourceBufferLocationId) {
-            return new FullRollLoadingTaskScheduled(Instant.now(), missionId.getId(),
+        public static WindingRollerLoadingMissionScheduled now(MissionId missionId,
+                                                               BufferLocationId sourceBufferLocationId) {
+            return new WindingRollerLoadingMissionScheduled(Instant.now(), missionId.getId(),
                     sourceBufferLocationId.getId());
         }
 

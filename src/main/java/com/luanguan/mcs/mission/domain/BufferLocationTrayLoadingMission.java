@@ -2,7 +2,7 @@ package com.luanguan.mcs.mission.domain;
 
 import com.luanguan.mcs.buffer_location.domain.BufferLocationId;
 import com.luanguan.mcs.framework.domain.Version;
-import com.luanguan.mcs.shared_kernel.RobotTaskId;
+import com.luanguan.mcs.external.robot.application.RobotTaskId;
 import lombok.Getter;
 import lombok.NonNull;
 

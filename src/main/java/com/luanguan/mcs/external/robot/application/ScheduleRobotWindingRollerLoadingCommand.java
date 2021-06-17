@@ -1,11 +1,11 @@
-package com.luanguan.mcs.shared_kernel;
+package com.luanguan.mcs.external.robot.application;
 
 import com.luanguan.mcs.shared_kernel.*;
 import lombok.NonNull;
 import lombok.Value;
 
 @Value
-public class ScheduleRobotWindingRollerLoadingRequest {
+public class ScheduleRobotWindingRollerLoadingCommand {
 
     @NonNull Position sourceBufferLocationPosition;
 

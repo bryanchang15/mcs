@@ -50,19 +50,19 @@ public class MissionEventHandler {
                 .map(this::saveBufferLocation);
     }
 
-    public void handle(FullRollLoadingTaskScheduled fullRollLoadingTaskScheduled) {
-        bufferLocationRepository.findBy(fullRollLoadingTaskScheduled.sourceBufferLocationId())
+    public void handle(WindingRollerLoadingMissionScheduled windingRollerLoadingMissionScheduled) {
+        bufferLocationRepository.findBy(windingRollerLoadingMissionScheduled.sourceBufferLocationId())
                 .map(bufferLocation ->
-                        bufferLocation.handle(fullRollLoadingTaskScheduled)
+                        bufferLocation.handle(windingRollerLoadingMissionScheduled)
                                 .mapLeft(domainEvent -> raiseDomainEvent(bufferLocation, domainEvent))
                                 .map(this::saveBufferLocation)
                 );
     }
 
-    public void handle(EmptyRollLoadingTaskScheduled emptyRollLoadingTaskScheduled) {
-        bufferLocationRepository.findBy(emptyRollLoadingTaskScheduled.targetBufferLocationId())
+    public void handle(BufferLocationEmptyRollLoadingMissionScheduled bufferLocationEmptyRollLoadingMissionScheduled) {
+        bufferLocationRepository.findBy(bufferLocationEmptyRollLoadingMissionScheduled.targetBufferLocationId())
                 .map(bufferLocation ->
-                        bufferLocation.handle(emptyRollLoadingTaskScheduled)
+                        bufferLocation.handle(bufferLocationEmptyRollLoadingMissionScheduled)
                                 .mapLeft(domainEvent -> raiseDomainEvent(bufferLocation, domainEvent))
                                 .map(this::saveBufferLocation)
                 );

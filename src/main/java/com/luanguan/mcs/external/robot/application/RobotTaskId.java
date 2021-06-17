@@ -1,4 +1,4 @@
-package com.luanguan.mcs.shared_kernel;
+package com.luanguan.mcs.external.robot.application;
 
 import lombok.NonNull;
 import lombok.Value;

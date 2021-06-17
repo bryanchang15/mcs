@@ -3,6 +3,8 @@ package com.luanguan.mcs.buffer_location.domain;
 import com.luanguan.mcs.framework.domain.DomainEvent;
 import com.luanguan.mcs.framework.domain.Version;
 import com.luanguan.mcs.mission.domain.MissionEvent;
+import com.luanguan.mcs.mission.domain.MissionEvent.BufferLocationEmptyRollLoadingMissionScheduled;
+import com.luanguan.mcs.mission.domain.MissionEvent.WindingRollerLoadingMissionScheduled;
 import com.luanguan.mcs.shared_kernel.BatteryModel;
 import com.luanguan.mcs.shared_kernel.Position;
 import com.luanguan.mcs.winding_machine.domain.ElectrodeType;
@@ -43,13 +45,13 @@ public abstract class BufferLocation {
     }
 
     public Either<DomainEvent, BufferLocation> handle(
-            MissionEvent.FullRollLoadingTaskScheduled fullRollLoadingTaskScheduled
+            WindingRollerLoadingMissionScheduled windingRollerLoadingMissionScheduled
     ) {
         return Either.right(this);
     }
 
     public Either<DomainEvent, BufferLocation> handle(
-            MissionEvent.EmptyRollLoadingTaskScheduled emptyRollLoadingTaskScheduled
+            BufferLocationEmptyRollLoadingMissionScheduled bufferLocationEmptyRollLoadingMissionScheduled
     ) {
         return Either.right(this);
     }

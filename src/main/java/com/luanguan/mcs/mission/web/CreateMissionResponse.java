@@ -4,7 +4,7 @@ import lombok.NonNull;
 import lombok.Value;
 
 @Value
-public class CreateMissionResult {
+public class CreateMissionResponse {
 
     @NonNull Integer resultCode;
 

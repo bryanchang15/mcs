@@ -1,12 +1,12 @@
 package com.luanguan.mcs.empty_roll_location.domain;
 
-import java.util.List;
-import java.util.Optional;
-
 import com.luanguan.mcs.shared_kernel.BatteryModel;
 import com.luanguan.mcs.winding_machine.domain.ElectrodeType;
-
+import io.vavr.control.Option;
 import lombok.AllArgsConstructor;
+
+import java.util.List;
+import java.util.Optional;
 
 @AllArgsConstructor
 public class EmptyRollLocationService {
@@ -14,25 +14,31 @@ public class EmptyRollLocationService {
 
     private final EmptyRollLocationRepository emptyRollLocationRepository;
 
-    public Optional<LoadedEmptyRollLocation> findLoadedEmptyRollLocationBy(BatteryModel batteryModel,
-            ElectrodeType electrodeType) {
-        List<LoadedEmptyRollLocation> locations = emptyRollLocationRepository
-                .findLoadedEmptyRollLocationBy(batteryModel, electrodeType);
+    public Option<LoadedEmptyRollLocation> findLoadedEmptyRollLocationBy(
+            BatteryModel batteryModel,
+            ElectrodeType electrodeType
+    ) {
+        List<LoadedEmptyRollLocation> locations = emptyRollLocationRepository.findLoadedEmptyRollLocationBy(
+                batteryModel,
+                electrodeType
+        );
         if (locations.size() > 0) {
-            return Optional.of(locations.get(0));
+            return Option.of(locations.get(0));
         }
 
-        return Optional.empty();
+        return Option.none();
     }
 
-    public Optional<UnloadedEmptyRollLocation> findUnloadedEmptyRollLocationBy(BatteryModel batteryModel,
-            ElectrodeType electrodeType) {
+    public Option<UnloadedEmptyRollLocation> findUnloadedEmptyRollLocationBy(
+            BatteryModel batteryModel,
+            ElectrodeType electrodeType
+    ) {
         List<UnloadedEmptyRollLocation> locations = emptyRollLocationRepository.findAllUnloadedEmptyRollLocation();
         if (locations.size() > 0) {
-            return Optional.of(locations.get(0));
+            return Option.of(locations.get(0));
         }
 
-        return Optional.empty();
+        return Option.none();
     }
 
 }

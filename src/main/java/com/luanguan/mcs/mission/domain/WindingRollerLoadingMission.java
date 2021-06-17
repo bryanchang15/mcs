@@ -1,9 +1,11 @@
 package com.luanguan.mcs.mission.domain;
 
+import com.luanguan.mcs.buffer_location.domain.BufferLocation;
 import com.luanguan.mcs.buffer_location.domain.BufferLocationId;
 import com.luanguan.mcs.framework.domain.Version;
-import com.luanguan.mcs.shared_kernel.RobotTaskId;
+import com.luanguan.mcs.external.robot.application.RobotTaskId;
 import com.luanguan.mcs.winding_machine.domain.WindingRoller;
+import io.vavr.control.Option;
 import lombok.Getter;
 import lombok.NonNull;
 
@@ -14,28 +16,57 @@ public class WindingRollerLoadingMission extends Mission {
 
     BufferLocationId sourceBufferLocationId = null;
 
-    RobotTaskId scheduledRobotTaskId = null;
-
     public WindingRollerLoadingMission(
             @NonNull MissionId missionId,
             @NonNull Version version,
             @NonNull MissionState missionState,
             MissionPendingReason missionPendingReason,
+            RobotTaskId scheduledRobotTaskId,
             MissionId preMissionId,
             @NonNull WindingRoller targetWindingRoller
     ) {
-        super(missionId, version, missionState, missionPendingReason, preMissionId);
+        super(missionId, version, missionState, missionPendingReason, scheduledRobotTaskId, preMissionId);
         this.targetWindingRoller = targetWindingRoller;
     }
 
-    public void assignOf(BufferLocationId sourceBufferLocationId) {
-        super.ready();
-        this.sourceBufferLocationId = sourceBufferLocationId;
+    public Option<BufferLocationId> getSourceBufferLocationId() {
+        if (null == this.sourceBufferLocationId) {
+            return Option.none();
+        }
+
+        return Option.some(this.sourceBufferLocationId);
     }
 
-    public void executeBy(RobotTaskId scheduledRobotTaskId) {
-        super.execute();
-        this.scheduledRobotTaskId = scheduledRobotTaskId;
+    @Override
+    public WindingRollerLoadingMission pendBy(MissionPendingReason reason) {
+        super.pendBy(reason);
+        return this;
+    }
+
+    public WindingRollerLoadingMission assignOf(BufferLocationId sourceBufferLocationId) {
+        super.becomeReady();
+        this.sourceBufferLocationId = sourceBufferLocationId;
+
+        return this;
+    }
+
+    @Override
+    public WindingRollerLoadingMission executeBy(RobotTaskId scheduledRobotTaskId) {
+        super.executeBy(scheduledRobotTaskId);
+
+        return this;
+    }
+
+    @Override
+    public WindingRollerLoadingMission complete() {
+        super.complete();
+        return this;
+    }
+
+    @Override
+    public WindingRollerLoadingMission fail() {
+        super.fail();
+        return this;
     }
 
 }

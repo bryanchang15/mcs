@@ -34,24 +34,24 @@ public class EmptyRollLoadedBufferLocation extends BufferLocation {
     }
 
     @Override
-    public Either<DomainEvent, BufferLocation> handle(FullRollLoadingTaskScheduled fullRollLoadingTaskScheduled) {
+    public Either<DomainEvent, BufferLocation> handle(WindingRollerLoadingMissionScheduled windingRollerLoadingMissionScheduled) {
         return Either.left(BufferLocationMisMatchedEvent.now(
                 bufferLocationId(),
-                fullRollLoadingTaskScheduled.missionId()
+                windingRollerLoadingMissionScheduled.missionId()
         ));
     }
 
     @Override
-    public Either<DomainEvent, BufferLocation> handle(EmptyRollLoadingTaskScheduled emptyRollLoadingTaskScheduled) {
+    public Either<DomainEvent, BufferLocation> handle(BufferLocationEmptyRollLoadingMissionScheduled bufferLocationEmptyRollLoadingMissionScheduled) {
         return Match(canLoad()).of(
                 Case($(false), () -> Either.left(BufferLocationMisMatchedEvent.now(
                         bufferLocationId(),
-                        emptyRollLoadingTaskScheduled.missionId()
+                        bufferLocationEmptyRollLoadingMissionScheduled.missionId()
                 ))),
                 Case($(true), () -> Either.right(new EmptyRollLoadingBufferLocation(
                         bufferLocationInformation,
                         version,
-                        emptyRollLoadingTaskScheduled.missionId(),
+                        bufferLocationEmptyRollLoadingMissionScheduled.missionId(),
                         emptyRollElectrodeType,
                         emptyRollNum
                 )))

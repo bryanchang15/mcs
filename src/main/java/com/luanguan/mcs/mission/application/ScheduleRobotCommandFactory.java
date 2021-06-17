@@ -4,16 +4,16 @@ import com.luanguan.mcs.buffer_location.domain.FullRollLoadedBufferLocation;
 import com.luanguan.mcs.empty_roll_location.domain.UnloadedEmptyRollLocation;
 import com.luanguan.mcs.mission.domain.WindingRollerLoadingMission;
 import com.luanguan.mcs.mission.domain.WindingRollerUnloadingMission;
-import com.luanguan.mcs.shared_kernel.ScheduleRobotWindingRollerLoadingRequest;
-import com.luanguan.mcs.shared_kernel.ScheduleRobotWindingRollerUnloadingRequest;
+import com.luanguan.mcs.external.robot.application.ScheduleRobotWindingRollerLoadingCommand;
+import com.luanguan.mcs.external.robot.application.ScheduleRobotWindingRollerUnloadingCommand;
 
-public class ScheduleRobotRequestFactory {
+public class ScheduleRobotCommandFactory {
 
-    public ScheduleRobotWindingRollerUnloadingRequest createBy(
+    public static ScheduleRobotWindingRollerUnloadingCommand create(
             WindingRollerUnloadingMission mission,
             UnloadedEmptyRollLocation targetEmptyRollLocation
     ) {
-        return new ScheduleRobotWindingRollerUnloadingRequest(
+        return new ScheduleRobotWindingRollerUnloadingCommand(
                 mission.getSourceWindingRoller()
                         .getWindingMachinePosition(),
                 mission.getSourceWindingRoller()
@@ -24,11 +24,11 @@ public class ScheduleRobotRequestFactory {
         );
     }
 
-    public ScheduleRobotWindingRollerLoadingRequest createBy(
+    public static ScheduleRobotWindingRollerLoadingCommand create(
             WindingRollerLoadingMission mission,
             FullRollLoadedBufferLocation sourceBufferLocation
     ) {
-        return new ScheduleRobotWindingRollerLoadingRequest(
+        return new ScheduleRobotWindingRollerLoadingCommand(
                 sourceBufferLocation.bufferLocationPosition(),
                 sourceBufferLocation.getTargetTrayPosition(),
                 mission.getTargetWindingRoller().getWindingMachinePosition(),

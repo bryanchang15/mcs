@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface DomainEventRepository {
 
-    void publish(DomainEvent event);
+    DomainEvent publish(DomainEvent event);
 
     default void publish(List<DomainEvent> events) {
         events.forEach(this::publish);

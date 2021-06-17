@@ -3,7 +3,7 @@ package com.luanguan.mcs.mission.domain;
 import com.luanguan.mcs.buffer_location.domain.BufferLocationId;
 import com.luanguan.mcs.empty_roll_location.domain.EmptyRollLocationId;
 import com.luanguan.mcs.framework.domain.Version;
-import com.luanguan.mcs.shared_kernel.RobotTaskId;
+import com.luanguan.mcs.external.robot.application.RobotTaskId;
 import lombok.Getter;
 import lombok.NonNull;
 
@@ -28,14 +28,18 @@ public class BufferLocationEmptyRollLoadingMission extends Mission {
         this.targetBufferLocationId = sourceBufferLocationId;
     }
 
-    public void assignOf(EmptyRollLocationId sourceEmptyRollLocationId) {
+    public BufferLocationEmptyRollLoadingMission assignOf(EmptyRollLocationId sourceEmptyRollLocationId) {
         super.ready();
         this.sourceEmptyRollLocationId = sourceEmptyRollLocationId;
+
+        return this;
     }
 
-    public void executeBy(RobotTaskId scheduledRobotTaskId) {
+    public BufferLocationEmptyRollLoadingMission executeBy(RobotTaskId scheduledRobotTaskId) {
         super.execute();
         this.scheduledRobotTaskId = scheduledRobotTaskId;
+
+        return this;
     }
 
 }
