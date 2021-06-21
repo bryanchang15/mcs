@@ -6,8 +6,9 @@ public interface DomainEventRepository {
 
     DomainEvent publish(DomainEvent event);
 
-    default void publish(List<DomainEvent> events) {
+    default List<DomainEvent> publish(List<DomainEvent> events) {
         events.forEach(this::publish);
+        return events;
     }
 
 }

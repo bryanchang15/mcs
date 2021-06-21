@@ -14,17 +14,13 @@ import static io.vavr.API.Match;
 @EqualsAndHashCode(callSuper = false, of = "bufferLocationInformation")
 public class FullRollUnloadingBufferLocation extends BufferLocation {
 
-    @NonNull
-    BufferLocationInformation bufferLocationInformation;
+    @NonNull BufferLocationInformation bufferLocationInformation;
 
-    @NonNull
-    Version version;
+    @NonNull Version version;
 
-    @NonNull
-    MissionId byMission;
+    @NonNull MissionId byMission;
 
-    @NonNull
-    Integer fullRollNum;
+    @NonNull Integer fullRollNum;
 
     @Override
     public BufferLocation handle(MissionCompleted missionCompleted) {
@@ -43,11 +39,6 @@ public class FullRollUnloadingBufferLocation extends BufferLocation {
 
     @Override
     public BufferLocation handle(MissionFailed missionFailed) {
-        return new FullRollLoadedBufferLocation(bufferLocationInformation, version, fullRollNum);
-    }
-
-    @Override
-    public BufferLocation handle(MissionPended missionPended) {
         return new FullRollLoadedBufferLocation(bufferLocationInformation, version, fullRollNum);
     }
 

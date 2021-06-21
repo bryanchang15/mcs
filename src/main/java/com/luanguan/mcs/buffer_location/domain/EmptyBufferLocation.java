@@ -13,14 +13,12 @@ import lombok.Value;
 
 @Value
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = false, of = "bufferLocationInformation")
+@EqualsAndHashCode(of = "bufferLocationInformation", callSuper = false)
 public class EmptyBufferLocation extends BufferLocation {
 
-    @NonNull
-    BufferLocationInformation bufferLocationInformation;
+    @NonNull BufferLocationInformation bufferLocationInformation;
 
-    @NonNull
-    Version version;
+    @NonNull Version version;
 
     public TrayPosition getTargetTrayPosition() {
         return TrayPosition.Inner;
@@ -28,42 +26,22 @@ public class EmptyBufferLocation extends BufferLocation {
 
     @Override
     public Either<DomainEvent, BufferLocation> handle(
-            WindingRollerLoadingMissionScheduled windingRollerLoadingMissionScheduled
-    ) {
-        return Either.left(BufferLocationMisMatchedEvent.now(
-                bufferLocationId(),
-                windingRollerLoadingMissionScheduled.missionId()
-        ));
-    }
-
-    @Override
-    public Either<DomainEvent, BufferLocation> handle(
-            BufferLocationEmptyRollLoadingMissionScheduled bufferLocationEmptyRollLoadingMissionScheduled
+            BufferLocationRollLoadingMissionScheduled bufferLocationRollLoadingMissionScheduled
     ) {
         return Either.right(new EmptyRollLoadingBufferLocation(
                 bufferLocationInformation,
                 version,
-                bufferLocationEmptyRollLoadingMissionScheduled.missionId(),
-                bufferLocationEmptyRollLoadingMissionScheduled.electrodeType(),
+                bufferLocationRollLoadingMissionScheduled.missionId(),
+                bufferLocationRollLoadingMissionScheduled.electrodeType(),
                 1
         ));
     }
 
     @Override
     public Either<DomainEvent, BufferLocation> handle(
-            TrayUnloadingTaskScheduled trayUnloadingMissionScheduled
+            BufferLocationTrayUnloadingMissionScheduled trayUnloadingMissionScheduled
     ) {
         return Either.right(new NoTrayBufferLocation(bufferLocationInformation, version));
-    }
-
-    @Override
-    public Either<DomainEvent, BufferLocation> handle(
-            TrayLoadingTaskScheduled trayLoadingMissionScheduled
-    ) {
-        return Either.left(BufferLocationMisMatchedEvent.now(
-                bufferLocationId(),
-                trayLoadingMissionScheduled.missionId()
-        ));
     }
 
 }

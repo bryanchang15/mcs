@@ -1,14 +1,12 @@
 package com.luanguan.mcs.mission.application;
 
 import com.luanguan.mcs.framework.domain.DomainEventRepository;
-import com.luanguan.mcs.framework.domain.Version;
-import com.luanguan.mcs.mission.domain.MissionEvent.MissionCreated;
 import com.luanguan.mcs.mission.domain.*;
+import com.luanguan.mcs.mission.domain.MissionEvent.MissionCreated;
 import com.luanguan.mcs.winding_machine.application.FindWindingRoller;
 import io.vavr.control.Try;
 import lombok.AllArgsConstructor;
-
-import java.util.UUID;
+import org.springframework.transaction.annotation.Transactional;
 
 @AllArgsConstructor
 public class CreatingWindingRollerMission {
@@ -23,14 +21,9 @@ public class CreatingWindingRollerMission {
                 command.getBatteryModel(),
                 command.getRollerName()
         ).map(windingRoller -> {
-            WindingRollerLoadingMission mission = new WindingRollerLoadingMission(
-                    new MissionId(UUID.randomUUID()),
-                    Version.zero(),
-                    MissionState.Created,
-                    null,
-                    null,
-                    windingRoller);
-            missionRepository.save(mission);
+            Mission mission = missionRepository.save(WindingRollerMissionFactory.unloading(
+                    windingRoller
+            ));
             domainEventRepository.publish(MissionCreated.now(mission.getMissionId()));
 
             return new CreateMissionResult(mission.getMissionId().getId());
@@ -43,42 +36,31 @@ public class CreatingWindingRollerMission {
                 command.getBatteryModel(),
                 command.getRollerName()
         ).map(windingRoller -> {
-            WindingRollerUnloadingMission mission = new WindingRollerUnloadingMission(
-                    new MissionId(UUID.randomUUID()),
-                    Version.zero(),
-                    MissionState.Created,
+            Mission mission = missionRepository.save(WindingRollerMissionFactory.loading(
                     null,
-                    windingRoller);
-            missionRepository.save(mission);
+                    windingRoller
+            ));
             domainEventRepository.publish(MissionCreated.now(mission.getMissionId()));
 
             return new CreateMissionResult(mission.getMissionId().getId());
         });
     }
 
+    @Transactional
     public Try<CreateMissionResult> createReloading(CreateWindingRollerMissionCommand command) {
         return findWindingRoller.findBy(
                 command.getWindingMachinePosition(),
                 command.getBatteryModel(),
                 command.getRollerName()
         ).map(windingRoller -> {
-            WindingRollerUnloadingMission preMission = new WindingRollerUnloadingMission(
-                    new MissionId(UUID.randomUUID()),
-                    Version.zero(),
-                    MissionState.Created,
-                    null,
-                    windingRoller);
-            missionRepository.save(preMission);
+            Mission preMission = missionRepository.save(WindingRollerMissionFactory.unloading(
+                    windingRoller
+            ));
+            Mission mission = missionRepository.save(WindingRollerMissionFactory.loading(
+                    preMission.getMissionId(),
+                    windingRoller
+            ));
             domainEventRepository.publish(MissionCreated.now(preMission.getMissionId()));
-
-            WindingRollerLoadingMission mission = new WindingRollerLoadingMission(
-                    new MissionId(UUID.randomUUID()),
-                    Version.zero(),
-                    MissionState.Created,
-                    null,
-                    preMission.getPreMissionId(),
-                    windingRoller);
-            missionRepository.save(mission);
             domainEventRepository.publish(MissionCreated.now(mission.getMissionId()));
 
             return new CreateMissionResult(mission.getMissionId().getId());

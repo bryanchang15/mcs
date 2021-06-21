@@ -1,39 +1,36 @@
 package com.luanguan.mcs.empty_roll_location.domain;
 
+import com.luanguan.mcs.framework.domain.DomainEvent;
 import com.luanguan.mcs.framework.domain.Version;
-import com.luanguan.mcs.mission.domain.MissionEvent;
-import com.luanguan.mcs.mission.domain.MissionId;
+import com.luanguan.mcs.mission.domain.MissionEvent.BufferLocationRollLoadingMissionScheduled;
 import com.luanguan.mcs.shared_kernel.BatteryModel;
 import com.luanguan.mcs.winding_machine.domain.ElectrodeType;
-
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.NonNull;
-import lombok.Value;
+import io.vavr.control.Either;
+import lombok.*;
 
 @Value
 @AllArgsConstructor
-@EqualsAndHashCode(of = "emptyRollLocationId")
-public class LoadedEmptyRollLocation implements EmptyRollLocation {
+@EqualsAndHashCode(of = "emptyRollLocationInformation", callSuper = false)
+public class LoadedEmptyRollLocation extends EmptyRollLocation {
 
-    @NonNull
-    EmptyRollLocationId emptyRollLocationId;
+    @NonNull EmptyRollLocationInformation emptyRollLocationInformation;
 
-    @NonNull
-    EmptyRollLocationPosition emptyRollLocationPosition;
+    @NonNull Version version;
 
-    @NonNull
-    Version version;
+    @NonNull BatteryModel batteryModel;
 
-    @NonNull
-    BatteryModel batteryModel;
+    @NonNull ElectrodeType electrodeType;
 
-    @NonNull
-    ElectrodeType electrodeType;
-
-    public UnloadingEmptyRollLocation handle(MissionEvent.MissionScheduled missionScheduled) {
-        return new UnloadingEmptyRollLocation(emptyRollLocationId, emptyRollLocationPosition, version, batteryModel,
-                electrodeType, new MissionId(missionScheduled.getMissionId()));
+    public Either<DomainEvent, EmptyRollLocation> handle(
+            BufferLocationRollLoadingMissionScheduled missionScheduled
+    ) {
+        return Either.right(new UnloadingEmptyRollLocation(
+                emptyRollLocationInformation,
+                version,
+                batteryModel,
+                electrodeType,
+                missionScheduled.missionId()
+        ));
     }
 
 }

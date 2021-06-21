@@ -1,6 +1,5 @@
 package com.luanguan.mcs.buffer_location.infrastructure;
 
-import com.luanguan.mcs.buffer_location.application.FindFullRollLoadedBufferLocation;
 import com.luanguan.mcs.buffer_location.domain.*;
 import com.luanguan.mcs.framework.domain.AggregateRootIsStale;
 import com.luanguan.mcs.mission.domain.MissionId;
@@ -20,15 +19,18 @@ import static io.vavr.Patterns.$Some;
 import static io.vavr.Predicates.instanceOf;
 
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
-public class BufferLocationRepositoryImpl implements FindFullRollLoadedBufferLocation, BufferLocationRepository {
+public class BufferLocationRepositoryImpl implements BufferLocationRepository {
 
     private final BufferLocationJpaRepository bufferLocationJpaRepository;
 
     @Override
-    public Option<FullRollLoadedBufferLocation> findBy(BatteryModel batteryModel, ElectrodeType electrodeType) {
+    public Option<FullRollLoadedBufferLocation> findFullRollLoadedBufferLocationBy(
+            BatteryModel batteryModel,
+            ElectrodeType electrodeType
+    ) {
         return Match(
                 Option.ofOptional(
-                        bufferLocationJpaRepository.findByBufferLocationStateAndBufferBatteryModelAndFullRollElectrodeType(
+                        bufferLocationJpaRepository.findByStateAndBatteryModelAndFullElectrodeType(
                                 FullRollLoaded,
                                 batteryModel.getModelName(),
                                 electrodeType.getValue()
@@ -51,16 +53,16 @@ public class BufferLocationRepositoryImpl implements FindFullRollLoadedBufferLoc
     @Override
     public Option<BufferLocation> findBy(BufferLocationId bufferLocationId) {
         return Option.ofOptional(
-                bufferLocationJpaRepository.findByBufferLocationId(bufferLocationId.getId())
+                bufferLocationJpaRepository.findById(bufferLocationId.getId())
                         .map(BufferLocationJpaEntity::toDomainModel)
         );
     }
 
     @Override
     public BufferLocation save(BufferLocation bufferLocation) {
-        return bufferLocationJpaRepository.findByBufferLocationId(bufferLocation.bufferLocationId().getId())
+        return bufferLocationJpaRepository.findById(bufferLocation.getBufferLocationId().getId())
                 .map(entity -> updateOptimistically(entity, bufferLocation))
-                .orElse(insertNew(bufferLocation));
+                .orElseThrow(() -> new RuntimeException("buffer location can't be created"));
     }
 
     @SneakyThrows
@@ -93,287 +95,159 @@ public class BufferLocationRepositoryImpl implements FindFullRollLoadedBufferLoc
     @Modifying
     private Try<BufferLocation> update(
             BufferLocationJpaEntity entity,
-            EmptyBufferLocation emptyBufferLocation
+            EmptyBufferLocation bufferLocation
     ) {
-        entity.buffer_location_state = Empty;
-        entity.buffer_location_id = emptyBufferLocation.bufferLocationId().getId();
-        entity.buffer_location_position = emptyBufferLocation.bufferLocationPosition().getPositionId();
-        entity.buffer_battery_model = emptyBufferLocation.bufferBatteryModel().getModelName();
-        entity.full_roll_electrode_type = emptyBufferLocation.fullRollElectrodeType().getValue();
-        entity.version_number = emptyBufferLocation.getVersion().getVersionNum();
+        assert entity.id.equals(bufferLocation.getBufferLocationId().getId());
+
+        entity.state = Empty;
+        entity.position = bufferLocation.getBufferLocationPosition().getPositionId();
+        entity.battery_model = bufferLocation.getBufferBatteryModel().getModelName();
+        entity.full_electrode_type = bufferLocation.getFullRollElectrodeType().getValue();
+        entity.version_number = bufferLocation.getVersion().getVersionNum();
         try {
             entity = bufferLocationJpaRepository.save(entity);
             return Try.success(entity.toDomainModel());
         } catch (ObjectOptimisticLockingFailureException e) {
             return Try.failure(new AggregateRootIsStale(
-                    "buffer location is updated at meantime, bufferLocation: " + emptyBufferLocation
+                    "buffer location is updated at meantime, bufferLocation: " + bufferLocation
             ));
         }
     }
 
     private Try<BufferLocation> update(
             BufferLocationJpaEntity entity,
-            EmptyRollLoadedBufferLocation emptyRollLoadedBufferLocation
+            EmptyRollLoadedBufferLocation bufferLocation
     ) {
-        entity.buffer_location_state = EmptyRollLoaded;
-        entity.buffer_location_id = emptyRollLoadedBufferLocation.bufferLocationId().getId();
-        entity.buffer_location_position = emptyRollLoadedBufferLocation.bufferLocationPosition().getPositionId();
-        entity.buffer_battery_model = emptyRollLoadedBufferLocation.bufferBatteryModel().getModelName();
-        entity.full_roll_electrode_type = emptyRollLoadedBufferLocation.fullRollElectrodeType().getValue();
-        entity.empty_roll_electrode_type = emptyRollLoadedBufferLocation.getEmptyRollElectrodeType().getValue();
-        entity.roll_number = emptyRollLoadedBufferLocation.getEmptyRollNum();
-        entity.version_number = emptyRollLoadedBufferLocation.getVersion().getVersionNum();
+        assert entity.id.equals(bufferLocation.getBufferLocationId().getId());
+
+        entity.state = EmptyRollLoaded;
+        entity.position = bufferLocation.getBufferLocationPosition().getPositionId();
+        entity.battery_model = bufferLocation.getBufferBatteryModel().getModelName();
+        entity.full_electrode_type = bufferLocation.getFullRollElectrodeType().getValue();
+        entity.empty_electrode_type = bufferLocation.getEmptyRollElectrodeType().getValue();
+        entity.roll_number = bufferLocation.getEmptyRollNum();
+        entity.version_number = bufferLocation.getVersion().getVersionNum();
         try {
             entity = bufferLocationJpaRepository.save(entity);
             return Try.success(entity.toDomainModel());
         } catch (ObjectOptimisticLockingFailureException e) {
             return Try.failure(new AggregateRootIsStale(
-                    "buffer location is updated at meantime, bufferLocation: " + emptyRollLoadedBufferLocation
+                    "buffer location is updated at meantime, bufferLocation: " + bufferLocation
             ));
         }
     }
 
     private Try<BufferLocation> update(
             BufferLocationJpaEntity entity,
-            EmptyRollLoadingBufferLocation emptyRollLoadingBufferLocation
+            EmptyRollLoadingBufferLocation bufferLocation
     ) {
-        entity.buffer_location_state = EmptyRollLoading;
-        entity.buffer_location_id = emptyRollLoadingBufferLocation.bufferLocationId().getId();
-        entity.buffer_location_position = emptyRollLoadingBufferLocation.bufferLocationPosition().getPositionId();
-        entity.buffer_battery_model = emptyRollLoadingBufferLocation.bufferBatteryModel().getModelName();
-        entity.full_roll_electrode_type = emptyRollLoadingBufferLocation.fullRollElectrodeType().getValue();
-        entity.mission_id = emptyRollLoadingBufferLocation.getByMission().getId();
-        entity.empty_roll_electrode_type = emptyRollLoadingBufferLocation.getEmptyRollElectrodeType().getValue();
-        entity.roll_number = emptyRollLoadingBufferLocation.getEmptyRollNum();
-        entity.version_number = emptyRollLoadingBufferLocation.getVersion().getVersionNum();
+        assert entity.id.equals(bufferLocation.getBufferLocationId().getId());
+
+        entity.state = EmptyRollLoading;
+        entity.position = bufferLocation.getBufferLocationPosition().getPositionId();
+        entity.battery_model = bufferLocation.getBufferBatteryModel().getModelName();
+        entity.full_electrode_type = bufferLocation.getFullRollElectrodeType().getValue();
+        entity.mission_id = bufferLocation.getByMission().getId();
+        entity.empty_electrode_type = bufferLocation.getEmptyRollElectrodeType().getValue();
+        entity.roll_number = bufferLocation.getEmptyRollNum();
+        entity.version_number = bufferLocation.getVersion().getVersionNum();
         try {
             entity = bufferLocationJpaRepository.save(entity);
             return Try.success(entity.toDomainModel());
         } catch (ObjectOptimisticLockingFailureException e) {
             return Try.failure(new AggregateRootIsStale(
-                    "buffer location is updated at meantime, bufferLocation: " + emptyRollLoadingBufferLocation
+                    "buffer location is updated at meantime, bufferLocation: " + bufferLocation
             ));
         }
     }
 
     private Try<BufferLocation> update(
             BufferLocationJpaEntity entity,
-            FullRollLoadedBufferLocation fullRollLoadedBufferLocation
+            FullRollLoadedBufferLocation bufferLocation
     ) {
-        entity.buffer_location_state = FullRollLoaded;
-        entity.buffer_location_id = fullRollLoadedBufferLocation.bufferLocationId().getId();
-        entity.buffer_location_position = fullRollLoadedBufferLocation.bufferLocationPosition().getPositionId();
-        entity.buffer_battery_model = fullRollLoadedBufferLocation.bufferBatteryModel().getModelName();
-        entity.full_roll_electrode_type = fullRollLoadedBufferLocation.fullRollElectrodeType().getValue();
-        entity.roll_number = fullRollLoadedBufferLocation.getFullRollNum();
-        entity.version_number = fullRollLoadedBufferLocation.getVersion().getVersionNum();
+        assert entity.id.equals(bufferLocation.getBufferLocationId().getId());
+
+        entity.state = FullRollLoaded;
+        entity.position = bufferLocation.getBufferLocationPosition().getPositionId();
+        entity.battery_model = bufferLocation.getBufferBatteryModel().getModelName();
+        entity.full_electrode_type = bufferLocation.getFullRollElectrodeType().getValue();
+        entity.roll_number = bufferLocation.getFullRollNum();
+        entity.version_number = bufferLocation.getVersion().getVersionNum();
         try {
             entity = bufferLocationJpaRepository.save(entity);
             return Try.success(entity.toDomainModel());
         } catch (ObjectOptimisticLockingFailureException e) {
             return Try.failure(new AggregateRootIsStale(
-                    "buffer location is updated at meantime, bufferLocation: " + fullRollLoadedBufferLocation
+                    "buffer location is updated at meantime, bufferLocation: " + bufferLocation
             ));
         }
     }
 
     private Try<BufferLocation> update(
             BufferLocationJpaEntity entity,
-            FullRollUnloadingBufferLocation fullRollUnloadingBufferLocation
+            FullRollUnloadingBufferLocation bufferLocation
     ) {
-        entity.buffer_location_state = FullRollUnloading;
-        entity.buffer_location_id = fullRollUnloadingBufferLocation.bufferLocationId().getId();
-        entity.buffer_location_position = fullRollUnloadingBufferLocation.bufferLocationPosition().getPositionId();
-        entity.buffer_battery_model = fullRollUnloadingBufferLocation.bufferBatteryModel().getModelName();
-        entity.full_roll_electrode_type = fullRollUnloadingBufferLocation.fullRollElectrodeType().getValue();
-        entity.mission_id = fullRollUnloadingBufferLocation.getByMission().getId();
-        entity.roll_number = fullRollUnloadingBufferLocation.getFullRollNum();
-        entity.version_number = fullRollUnloadingBufferLocation.getVersion().getVersionNum();
+        assert entity.id.equals(bufferLocation.getBufferLocationId().getId());
+
+        entity.state = FullRollUnloading;
+        entity.position = bufferLocation.getBufferLocationPosition().getPositionId();
+        entity.battery_model = bufferLocation.getBufferBatteryModel().getModelName();
+        entity.full_electrode_type = bufferLocation.getFullRollElectrodeType().getValue();
+        entity.mission_id = bufferLocation.getByMission().getId();
+        entity.roll_number = bufferLocation.getFullRollNum();
+        entity.version_number = bufferLocation.getVersion().getVersionNum();
         try {
             entity = bufferLocationJpaRepository.save(entity);
             return Try.success(entity.toDomainModel());
         } catch (ObjectOptimisticLockingFailureException e) {
             return Try.failure(new AggregateRootIsStale(
-                    "buffer location is updated at meantime, bufferLocation: " + fullRollUnloadingBufferLocation
+                    "buffer location is updated at meantime, bufferLocation: " + bufferLocation
             ));
         }
     }
 
     private Try<BufferLocation> update(
             BufferLocationJpaEntity entity,
-            NoTrayBufferLocation noTrayBufferLocation
+            NoTrayBufferLocation bufferLocation
     ) {
-        entity.buffer_location_state = NoTray;
-        entity.buffer_location_id = noTrayBufferLocation.bufferLocationId().getId();
-        entity.buffer_location_position = noTrayBufferLocation.bufferLocationPosition().getPositionId();
-        entity.buffer_battery_model = noTrayBufferLocation.bufferBatteryModel().getModelName();
-        entity.full_roll_electrode_type = noTrayBufferLocation.fullRollElectrodeType().getValue();
-        entity.version_number = noTrayBufferLocation.getVersion().getVersionNum();
+        assert entity.id.equals(bufferLocation.getBufferLocationId().getId());
+
+        entity.state = NoTray;
+        entity.position = bufferLocation.getBufferLocationPosition().getPositionId();
+        entity.battery_model = bufferLocation.getBufferBatteryModel().getModelName();
+        entity.full_electrode_type = bufferLocation.getFullRollElectrodeType().getValue();
+        entity.version_number = bufferLocation.getVersion().getVersionNum();
         try {
             entity = bufferLocationJpaRepository.save(entity);
             return Try.success(entity.toDomainModel());
         } catch (ObjectOptimisticLockingFailureException e) {
             return Try.failure(new AggregateRootIsStale(
-                    "buffer location is updated at meantime, bufferLocation: " + noTrayBufferLocation
+                    "buffer location is updated at meantime, bufferLocation: " + bufferLocation
             ));
         }
     }
 
     private Try<BufferLocation> update(
             BufferLocationJpaEntity entity,
-            TrayLoadingBufferLocation trayLoadingBufferLocation
+            TrayLoadingBufferLocation bufferLocation
     ) {
-        entity.buffer_location_state = TrayLoading;
-        entity.buffer_location_id = trayLoadingBufferLocation.bufferLocationId().getId();
-        entity.buffer_location_position = trayLoadingBufferLocation.bufferLocationPosition().getPositionId();
-        entity.buffer_battery_model = trayLoadingBufferLocation.bufferBatteryModel().getModelName();
-        entity.full_roll_electrode_type = trayLoadingBufferLocation.fullRollElectrodeType().getValue();
-        entity.mission_id = trayLoadingBufferLocation.getByMission().getId();
-        entity.roll_number = trayLoadingBufferLocation.getFullRollNum();
-        entity.version_number = trayLoadingBufferLocation.getVersion().getVersionNum();
+        assert entity.id.equals(bufferLocation.getBufferLocationId().getId());
+
+        entity.state = TrayLoading;
+        entity.position = bufferLocation.getBufferLocationPosition().getPositionId();
+        entity.battery_model = bufferLocation.getBufferBatteryModel().getModelName();
+        entity.full_electrode_type = bufferLocation.getFullRollElectrodeType().getValue();
+        entity.mission_id = bufferLocation.getByMission().getId();
+        entity.roll_number = bufferLocation.getFullRollNum();
+        entity.version_number = bufferLocation.getVersion().getVersionNum();
         try {
             entity = bufferLocationJpaRepository.save(entity);
             return Try.success(entity.toDomainModel());
         } catch (ObjectOptimisticLockingFailureException e) {
             return Try.failure(new AggregateRootIsStale(
-                    "buffer location is updated at meantime, bufferLocation: " + trayLoadingBufferLocation
+                    "buffer location is updated at meantime, bufferLocation: " + bufferLocation
             ));
         }
-    }
-
-    private BufferLocation insertNew(BufferLocation bufferLocation) {
-        return Match(bufferLocation).of(
-                Case($(instanceOf(EmptyBufferLocation.class)), this::insert),
-                Case($(instanceOf(EmptyRollLoadedBufferLocation.class)), this::insert),
-                Case($(instanceOf(EmptyRollLoadingBufferLocation.class)), this::insert),
-                Case($(instanceOf(FullRollLoadedBufferLocation.class)), this::insert),
-                Case($(instanceOf(FullRollUnloadingBufferLocation.class)), this::insert),
-                Case($(instanceOf(NoTrayBufferLocation.class)), this::insert),
-                Case($(instanceOf(TrayLoadingBufferLocation.class)), this::insert)
-        );
-    }
-
-    @Modifying
-    private BufferLocation insert(
-            EmptyBufferLocation emptyBufferLocation
-    ) {
-        BufferLocationJpaEntity entity = new BufferLocationJpaEntity();
-
-        entity.buffer_location_state = Empty;
-        entity.buffer_location_id = emptyBufferLocation.bufferLocationId().getId();
-        entity.buffer_location_position = emptyBufferLocation.bufferLocationPosition().getPositionId();
-        entity.buffer_battery_model = emptyBufferLocation.bufferBatteryModel().getModelName();
-        entity.full_roll_electrode_type = emptyBufferLocation.fullRollElectrodeType().getValue();
-        entity.version_number = emptyBufferLocation.getVersion().getVersionNum();
-        entity = bufferLocationJpaRepository.save(entity);
-
-        return entity.toDomainModel();
-    }
-
-    private BufferLocation insert(
-            EmptyRollLoadedBufferLocation emptyRollLoadedBufferLocation
-    ) {
-        BufferLocationJpaEntity entity = new BufferLocationJpaEntity();
-
-        entity.buffer_location_state = EmptyRollLoaded;
-        entity.buffer_location_id = emptyRollLoadedBufferLocation.bufferLocationId().getId();
-        entity.buffer_location_position = emptyRollLoadedBufferLocation.bufferLocationPosition().getPositionId();
-        entity.buffer_battery_model = emptyRollLoadedBufferLocation.bufferBatteryModel().getModelName();
-        entity.full_roll_electrode_type = emptyRollLoadedBufferLocation.fullRollElectrodeType().getValue();
-        entity.empty_roll_electrode_type = emptyRollLoadedBufferLocation.getEmptyRollElectrodeType().getValue();
-        entity.roll_number = emptyRollLoadedBufferLocation.getEmptyRollNum();
-        entity.version_number = emptyRollLoadedBufferLocation.getVersion().getVersionNum();
-        entity = bufferLocationJpaRepository.save(entity);
-
-        return entity.toDomainModel();
-    }
-
-    private BufferLocation insert(
-            EmptyRollLoadingBufferLocation emptyRollLoadingBufferLocation
-    ) {
-        BufferLocationJpaEntity entity = new BufferLocationJpaEntity();
-
-        entity.buffer_location_state = EmptyRollLoading;
-        entity.buffer_location_id = emptyRollLoadingBufferLocation.bufferLocationId().getId();
-        entity.buffer_location_position = emptyRollLoadingBufferLocation.bufferLocationPosition().getPositionId();
-        entity.buffer_battery_model = emptyRollLoadingBufferLocation.bufferBatteryModel().getModelName();
-        entity.full_roll_electrode_type = emptyRollLoadingBufferLocation.fullRollElectrodeType().getValue();
-        entity.mission_id = emptyRollLoadingBufferLocation.getByMission().getId();
-        entity.empty_roll_electrode_type = emptyRollLoadingBufferLocation.getEmptyRollElectrodeType().getValue();
-        entity.roll_number = emptyRollLoadingBufferLocation.getEmptyRollNum();
-        entity.version_number = emptyRollLoadingBufferLocation.getVersion().getVersionNum();
-        entity = bufferLocationJpaRepository.save(entity);
-
-        return entity.toDomainModel();
-    }
-
-    private BufferLocation insert(
-            FullRollLoadedBufferLocation fullRollLoadedBufferLocation
-    ) {
-        BufferLocationJpaEntity entity = new BufferLocationJpaEntity();
-
-        entity.buffer_location_state = FullRollLoaded;
-        entity.buffer_location_id = fullRollLoadedBufferLocation.bufferLocationId().getId();
-        entity.buffer_location_position = fullRollLoadedBufferLocation.bufferLocationPosition().getPositionId();
-        entity.buffer_battery_model = fullRollLoadedBufferLocation.bufferBatteryModel().getModelName();
-        entity.full_roll_electrode_type = fullRollLoadedBufferLocation.fullRollElectrodeType().getValue();
-        entity.roll_number = fullRollLoadedBufferLocation.getFullRollNum();
-        entity.version_number = fullRollLoadedBufferLocation.getVersion().getVersionNum();
-        entity = bufferLocationJpaRepository.save(entity);
-
-        return entity.toDomainModel();
-    }
-
-    private BufferLocation insert(
-            FullRollUnloadingBufferLocation fullRollUnloadingBufferLocation
-    ) {
-        BufferLocationJpaEntity entity = new BufferLocationJpaEntity();
-
-        entity.buffer_location_state = FullRollUnloading;
-        entity.buffer_location_id = fullRollUnloadingBufferLocation.bufferLocationId().getId();
-        entity.buffer_location_position = fullRollUnloadingBufferLocation.bufferLocationPosition().getPositionId();
-        entity.buffer_battery_model = fullRollUnloadingBufferLocation.bufferBatteryModel().getModelName();
-        entity.full_roll_electrode_type = fullRollUnloadingBufferLocation.fullRollElectrodeType().getValue();
-        entity.mission_id = fullRollUnloadingBufferLocation.getByMission().getId();
-        entity.roll_number = fullRollUnloadingBufferLocation.getFullRollNum();
-        entity.version_number = fullRollUnloadingBufferLocation.getVersion().getVersionNum();
-        entity = bufferLocationJpaRepository.save(entity);
-
-        return entity.toDomainModel();
-    }
-
-    private BufferLocation insert(
-            NoTrayBufferLocation noTrayBufferLocation
-    ) {
-        BufferLocationJpaEntity entity = new BufferLocationJpaEntity();
-
-        entity.buffer_location_state = NoTray;
-        entity.buffer_location_id = noTrayBufferLocation.bufferLocationId().getId();
-        entity.buffer_location_position = noTrayBufferLocation.bufferLocationPosition().getPositionId();
-        entity.buffer_battery_model = noTrayBufferLocation.bufferBatteryModel().getModelName();
-        entity.full_roll_electrode_type = noTrayBufferLocation.fullRollElectrodeType().getValue();
-        entity.version_number = noTrayBufferLocation.getVersion().getVersionNum();
-        entity = bufferLocationJpaRepository.save(entity);
-
-        return entity.toDomainModel();
-    }
-
-    private BufferLocation insert(
-            TrayLoadingBufferLocation trayLoadingBufferLocation
-    ) {
-        BufferLocationJpaEntity entity = new BufferLocationJpaEntity();
-
-        entity.buffer_location_state = TrayLoading;
-        entity.buffer_location_id = trayLoadingBufferLocation.bufferLocationId().getId();
-        entity.buffer_location_position = trayLoadingBufferLocation.bufferLocationPosition().getPositionId();
-        entity.buffer_battery_model = trayLoadingBufferLocation.bufferBatteryModel().getModelName();
-        entity.full_roll_electrode_type = trayLoadingBufferLocation.fullRollElectrodeType().getValue();
-        entity.mission_id = trayLoadingBufferLocation.getByMission().getId();
-        entity.roll_number = trayLoadingBufferLocation.getFullRollNum();
-        entity.version_number = trayLoadingBufferLocation.getVersion().getVersionNum();
-        entity = bufferLocationJpaRepository.save(entity);
-
-        return entity.toDomainModel();
     }
 
 }

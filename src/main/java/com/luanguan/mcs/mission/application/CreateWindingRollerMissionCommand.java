@@ -4,6 +4,8 @@ import com.luanguan.mcs.shared_kernel.*;
 import lombok.NonNull;
 import lombok.Value;
 
+import java.util.Objects;
+
 @Value
 public class CreateWindingRollerMissionCommand {
 
@@ -21,7 +23,7 @@ public class CreateWindingRollerMissionCommand {
         return new CreateWindingRollerMissionCommand(
                 new Position(windingMachineId),
                 new BatteryModel(batteryModelName),
-                WindingRollerName.getByName(windingRollerName)
+                Objects.requireNonNull(WindingRollerName.getByName(windingRollerName))
         );
     }
 

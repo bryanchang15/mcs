@@ -2,9 +2,7 @@ package com.luanguan.mcs.buffer_location.domain;
 
 import com.luanguan.mcs.framework.domain.DomainEvent;
 import com.luanguan.mcs.framework.domain.Version;
-import com.luanguan.mcs.mission.domain.MissionEvent;
-import com.luanguan.mcs.mission.domain.MissionEvent.BufferLocationEmptyRollLoadingMissionScheduled;
-import com.luanguan.mcs.mission.domain.MissionEvent.WindingRollerLoadingMissionScheduled;
+import com.luanguan.mcs.mission.domain.MissionEvent.*;
 import com.luanguan.mcs.shared_kernel.BatteryModel;
 import com.luanguan.mcs.shared_kernel.Position;
 import com.luanguan.mcs.winding_machine.domain.ElectrodeType;
@@ -12,23 +10,23 @@ import io.vavr.control.Either;
 
 public abstract class BufferLocation {
 
-    public BufferLocationId bufferLocationId() {
+    public final BufferLocationId getBufferLocationId() {
         return getBufferLocationInformation().getBufferLocationId();
     }
 
-    public Position bufferLocationPosition() {
+    public final Position getBufferLocationPosition() {
         return getBufferLocationInformation().getBufferLocationPosition();
     }
 
-    public BatteryModel bufferBatteryModel() {
+    public final BatteryModel getBufferBatteryModel() {
         return getBufferLocationInformation().getBufferBatteryModel();
     }
 
-    public ElectrodeType fullRollElectrodeType() {
+    public final ElectrodeType getFullRollElectrodeType() {
         return getBufferLocationInformation().getFullRollElectrodeType();
     }
 
-    public Integer trayCapacity() {
+    public final Integer getTrayCapacity() {
         return getBufferLocationInformation().getTrayCapacity();
     }
 
@@ -36,36 +34,48 @@ public abstract class BufferLocation {
 
     public abstract Version getVersion();
 
-    public BufferLocation handle(MissionEvent.MissionCompleted missionCompleted) {
+    public BufferLocation handle(MissionCompleted missionCompleted) {
         return this;
     }
 
-    public BufferLocation handle(MissionEvent.MissionFailed missionFailed) {
+    public BufferLocation handle(MissionFailed missionFailed) {
         return this;
     }
 
     public Either<DomainEvent, BufferLocation> handle(
-            WindingRollerLoadingMissionScheduled windingRollerLoadingMissionScheduled
+            WindingRollerLoadingMissionScheduled missionScheduled
     ) {
-        return Either.right(this);
+        return Either.left(BufferLocationMisMatchedEvent.now(
+                getBufferLocationId(),
+                missionScheduled.missionId()
+        ));
     }
 
     public Either<DomainEvent, BufferLocation> handle(
-            BufferLocationEmptyRollLoadingMissionScheduled bufferLocationEmptyRollLoadingMissionScheduled
+            BufferLocationRollLoadingMissionScheduled missionScheduled
     ) {
-        return Either.right(this);
+        return Either.left(BufferLocationMisMatchedEvent.now(
+                getBufferLocationId(),
+                missionScheduled.missionId()
+        ));
     }
 
     public Either<DomainEvent, BufferLocation> handle(
-            MissionEvent.TrayUnloadingTaskScheduled trayUnloadingTaskScheduled
+            BufferLocationTrayUnloadingMissionScheduled missionScheduled
     ) {
-        return Either.right(this);
+        return Either.left(BufferLocationMisMatchedEvent.now(
+                getBufferLocationId(),
+                missionScheduled.missionId()
+        ));
     }
 
     public Either<DomainEvent, BufferLocation> handle(
-            MissionEvent.TrayLoadingTaskScheduled trayLoadingTaskScheduled
+            BufferLocationTrayLoadingMissionScheduled missionScheduled
     ) {
-        return Either.right(this);
+        return Either.left(BufferLocationMisMatchedEvent.now(
+                getBufferLocationId(),
+                missionScheduled.missionId()
+        ));
     }
 
 }

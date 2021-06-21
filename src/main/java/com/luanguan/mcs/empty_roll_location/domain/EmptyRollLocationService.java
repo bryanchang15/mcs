@@ -2,11 +2,9 @@ package com.luanguan.mcs.empty_roll_location.domain;
 
 import com.luanguan.mcs.shared_kernel.BatteryModel;
 import com.luanguan.mcs.winding_machine.domain.ElectrodeType;
+import io.vavr.collection.List;
 import io.vavr.control.Option;
 import lombok.AllArgsConstructor;
-
-import java.util.List;
-import java.util.Optional;
 
 @AllArgsConstructor
 public class EmptyRollLocationService {
@@ -18,10 +16,11 @@ public class EmptyRollLocationService {
             BatteryModel batteryModel,
             ElectrodeType electrodeType
     ) {
-        List<LoadedEmptyRollLocation> locations = emptyRollLocationRepository.findLoadedEmptyRollLocationBy(
-                batteryModel,
-                electrodeType
-        );
+        List<LoadedEmptyRollLocation> locations =
+                emptyRollLocationRepository.findAllLoadedEmptyRollLocationBy(
+                        batteryModel,
+                        electrodeType
+                );
         if (locations.size() > 0) {
             return Option.of(locations.get(0));
         }
@@ -33,7 +32,8 @@ public class EmptyRollLocationService {
             BatteryModel batteryModel,
             ElectrodeType electrodeType
     ) {
-        List<UnloadedEmptyRollLocation> locations = emptyRollLocationRepository.findAllUnloadedEmptyRollLocation();
+        List<UnloadedEmptyRollLocation> locations =
+                emptyRollLocationRepository.findAllUnloadedEmptyRollLocation();
         if (locations.size() > 0) {
             return Option.of(locations.get(0));
         }

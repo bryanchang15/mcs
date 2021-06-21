@@ -8,7 +8,6 @@ import lombok.Value;
 @Value
 public class MissionId {
 
-    @NonNull
-    UUID id;
+    @NonNull Long id;
 
 }

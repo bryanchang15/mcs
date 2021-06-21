@@ -84,7 +84,7 @@ public class MissionEventHandler {
                 mission.getSourceWindingRoller().getElectrodeType()
         ).map(unloadedEmptyRollLocation ->
                 schedulingRobot.schedule(ScheduleRobotCommandFactory.create(
-                        mission.assignOf(unloadedEmptyRollLocation.emptyRollLocationId()),
+                        mission.assignOf(unloadedEmptyRollLocation.getEmptyRollLocationId()),
                         unloadedEmptyRollLocation
                 )).map(result ->
                         mission.executeBy(result.getRobotTaskId())
@@ -114,7 +114,7 @@ public class MissionEventHandler {
                                 mission.getTargetWindingRoller().getElectrodeType()
                         ).map(fullRollLoadedBufferLocation ->
                                 schedulingRobot.schedule(ScheduleRobotCommandFactory.create(
-                                        mission.assignOf(fullRollLoadedBufferLocation.bufferLocationId()),
+                                        mission.assignOf(fullRollLoadedBufferLocation.getBufferLocationId()),
                                         fullRollLoadedBufferLocation
                                 )).map(
                                         result -> mission.executeBy(result.getRobotTaskId())
@@ -134,6 +134,7 @@ public class MissionEventHandler {
                                 domainEventRepository.publish(WindingRollerUnloadingMissionScheduled.now(
                                         windingRollerUnloadingMission.getMissionId(),
                                         windingRollerUnloadingMission.getTargetEmptyRollLocationId().get(),
+                                        windingRollerUnloadingMission.getSourceWindingRoller().getBatteryModel(),
                                         windingRollerUnloadingMission.getSourceWindingRoller().getElectrodeType()
                                 ))
                         ),

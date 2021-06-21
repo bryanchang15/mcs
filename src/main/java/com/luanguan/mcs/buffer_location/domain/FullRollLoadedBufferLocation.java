@@ -18,14 +18,11 @@ import static io.vavr.API.*;
 @EqualsAndHashCode(callSuper = false, of = "bufferLocationInformation")
 public class FullRollLoadedBufferLocation extends BufferLocation {
 
-    @NonNull
-    BufferLocationInformation bufferLocationInformation;
+    @NonNull BufferLocationInformation bufferLocationInformation;
 
-    @NonNull
-    Version version;
+    @NonNull Version version;
 
-    @NonNull
-    Integer fullRollNum;
+    @NonNull Integer fullRollNum;
 
     public TrayPosition getTargetTrayPosition() {
         return Match(fullRollNum).of(
@@ -35,36 +32,14 @@ public class FullRollLoadedBufferLocation extends BufferLocation {
     }
 
     @Override
-    public Either<DomainEvent, BufferLocation> handle(WindingRollerLoadingMissionScheduled windingRollerLoadingMissionScheduled) {
+    public Either<DomainEvent, BufferLocation> handle(
+            WindingRollerLoadingMissionScheduled missionScheduled
+    ) {
         return Either.right(new FullRollUnloadingBufferLocation(
                 bufferLocationInformation,
                 version,
-                windingRollerLoadingMissionScheduled.missionId(),
+                missionScheduled.missionId(),
                 fullRollNum
-        ));
-    }
-
-    @Override
-    public Either<DomainEvent, BufferLocation> handle(BufferLocationEmptyRollLoadingMissionScheduled bufferLocationEmptyRollLoadingMissionScheduled) {
-        return Either.left(BufferLocationMisMatchedEvent.now(
-                bufferLocationId(),
-                bufferLocationEmptyRollLoadingMissionScheduled.missionId()
-        ));
-    }
-
-    @Override
-    public Either<DomainEvent, BufferLocation> handle(TrayUnloadingTaskScheduled trayUnloadingTaskScheduled) {
-        return Either.left(BufferLocationMisMatchedEvent.now(
-                bufferLocationId(),
-                trayUnloadingTaskScheduled.missionId()
-        ));
-    }
-
-    @Override
-    public Either<DomainEvent, BufferLocation> handle(TrayLoadingTaskScheduled trayLoadingTaskScheduled) {
-        return Either.left(BufferLocationMisMatchedEvent.now(
-                bufferLocationId(),
-                trayLoadingTaskScheduled.missionId()
         ));
     }
 

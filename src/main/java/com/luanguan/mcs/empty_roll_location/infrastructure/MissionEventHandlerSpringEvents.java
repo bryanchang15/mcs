@@ -1,6 +1,6 @@
-package com.luanguan.mcs.buffer_location.infrastructure;
+package com.luanguan.mcs.empty_roll_location.infrastructure;
 
-import com.luanguan.mcs.buffer_location.application.MissionEventHandler;
+import com.luanguan.mcs.empty_roll_location.application.MissionEventHandler;
 import com.luanguan.mcs.mission.domain.MissionEvent.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -22,22 +22,12 @@ public class MissionEventHandlerSpringEvents {
     }
 
     @EventListener
-    public void handle(WindingRollerLoadingMissionScheduled missionScheduled) {
-        missionEventHandler.handle(missionScheduled);
-    }
-
-    @EventListener
     public void handle(BufferLocationRollLoadingMissionScheduled missionScheduled) {
         missionEventHandler.handle(missionScheduled);
     }
 
     @EventListener
-    public void handle(BufferLocationTrayUnloadingMissionScheduled missionScheduled) {
-        missionEventHandler.handle(missionScheduled);
-    }
-
-    @EventListener
-    public void handle(BufferLocationTrayLoadingMissionScheduled missionScheduled) {
+    public void handle(WindingRollerUnloadingMissionScheduled missionScheduled) {
         missionEventHandler.handle(missionScheduled);
     }
 

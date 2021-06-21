@@ -15,20 +15,15 @@ import static io.vavr.API.Match;
 @EqualsAndHashCode(callSuper = false, of = "bufferLocationInformation")
 public class EmptyRollLoadingBufferLocation extends BufferLocation {
 
-    @NonNull
-    BufferLocationInformation bufferLocationInformation;
+    @NonNull BufferLocationInformation bufferLocationInformation;
 
-    @NonNull
-    Version version;
+    @NonNull Version version;
 
-    @NonNull
-    MissionId byMission;
+    @NonNull MissionId byMission;
 
-    @NonNull
-    ElectrodeType emptyRollElectrodeType;
+    @NonNull ElectrodeType emptyRollElectrodeType;
 
-    @NonNull
-    Integer emptyRollNum;
+    @NonNull Integer emptyRollNum;
 
     @Override
     public BufferLocation handle(MissionCompleted missionCompleted) {
@@ -42,19 +37,6 @@ public class EmptyRollLoadingBufferLocation extends BufferLocation {
 
     @Override
     public BufferLocation handle(MissionFailed missionFailed) {
-        return Match(emptyRollNum).of(
-                Case($(0), () -> new EmptyBufferLocation(bufferLocationInformation, version)),
-                Case($(), () -> new EmptyRollLoadedBufferLocation(
-                        bufferLocationInformation,
-                        version,
-                        emptyRollElectrodeType,
-                        emptyRollNum
-                ))
-        );
-    }
-
-    @Override
-    public BufferLocation handle(MissionPended missionPended) {
         return Match(emptyRollNum).of(
                 Case($(0), () -> new EmptyBufferLocation(bufferLocationInformation, version)),
                 Case($(), () -> new EmptyRollLoadedBufferLocation(

@@ -7,12 +7,9 @@ import lombok.Value;
 @Value
 public class EmptyRollLocationInformation {
 
-    @NonNull
-    EmptyRollLocationId emptyRollLocationId;
+    @NonNull EmptyRollLocationId emptyRollLocationId;
 
-    @NonNull
-    Position emptyRollRackPosition;
+    @NonNull Position emptyRollRackPosition;
 
-    @NonNull
-    Position emptyRollLocationPosition;
+    @NonNull Position emptyRollLocationPosition;
 }

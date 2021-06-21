@@ -1,51 +1,39 @@
 package com.luanguan.mcs.empty_roll_location.domain;
 
 import com.luanguan.mcs.framework.domain.Version;
-import com.luanguan.mcs.mission.domain.MissionEvent;
+import com.luanguan.mcs.mission.domain.MissionEvent.MissionCompleted;
+import com.luanguan.mcs.mission.domain.MissionEvent.MissionFailed;
 import com.luanguan.mcs.mission.domain.MissionId;
 import com.luanguan.mcs.shared_kernel.BatteryModel;
 import com.luanguan.mcs.winding_machine.domain.ElectrodeType;
-
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.NonNull;
-import lombok.Value;
+import lombok.*;
 
 @Value
 @AllArgsConstructor
-@EqualsAndHashCode(of = "emptyRollLocationId")
-public class UnloadingEmptyRollLocation implements EmptyRollLocation {
+@EqualsAndHashCode(of = "emptyRollLocationInformation", callSuper = false)
+public class UnloadingEmptyRollLocation extends EmptyRollLocation {
 
-    @NonNull
-    EmptyRollLocationId emptyRollLocationId;
+    @NonNull EmptyRollLocationInformation emptyRollLocationInformation;
 
-    @NonNull
-    EmptyRollLocationPosition emptyRollLocationPosition;
+    @NonNull Version version;
 
-    @NonNull
-    Version version;
+    @NonNull BatteryModel batteryModel;
 
-    @NonNull
-    BatteryModel batteryModel;
+    @NonNull ElectrodeType electrodeType;
 
-    @NonNull
-    ElectrodeType electrodeType;
+    @NonNull MissionId byMission;
 
-    @NonNull
-    MissionId byMission;
-
-    public LoadedEmptyRollLocation handle(MissionEvent.MissionFailed missionExpired) {
-        return new LoadedEmptyRollLocation(emptyRollLocationId, emptyRollLocationPosition, version, batteryModel,
-                electrodeType);
+    public LoadedEmptyRollLocation handle(MissionFailed missionFailed) {
+        return new LoadedEmptyRollLocation(
+                emptyRollLocationInformation,
+                version,
+                batteryModel,
+                electrodeType
+        );
     }
 
-    public LoadedEmptyRollLocation handle(MissionEvent.MissionCanceled missionCanceled) {
-        return new LoadedEmptyRollLocation(emptyRollLocationId, emptyRollLocationPosition, version, batteryModel,
-                electrodeType);
-    }
-
-    public UnloadedEmptyRollLocation handle(MissionEvent.MissionCompleted missionCompleted) {
-        return new UnloadedEmptyRollLocation(emptyRollLocationId, emptyRollLocationPosition, version);
+    public UnloadedEmptyRollLocation handle(MissionCompleted missionCompleted) {
+        return new UnloadedEmptyRollLocation(emptyRollLocationInformation, version);
     }
 
 }

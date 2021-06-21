@@ -10,72 +10,28 @@ import static io.vavr.API.$;
 import static io.vavr.API.Case;
 import static io.vavr.API.Match;
 
-@AllArgsConstructor
-@Getter
-@EqualsAndHashCode(of = "missionId")
-public abstract class Mission {
+public interface Mission {
 
-    @NonNull private final MissionId missionId;
+    MissionId getMissionId();
 
-    @NonNull private final Version version;
+    Version getVersion();
 
-    @NonNull private MissionState missionState;
+    MissionState getMissionState();
 
-    private MissionPendingReason missionPendingReason;
+    Option<MissionPendingReason> getMissionPendingReason();
 
-    private RobotTaskId scheduledRobotTaskId;
+    Option<RobotTaskId> getScheduledRobotTaskId();
 
-    private MissionId preMissionId;
+    Option<MissionId> getPreMissionId();
 
-    public Option<MissionPendingReason> getMissionPendingReason() {
-        return Match(this.missionState).of(
-                Case($(Pending), () -> Option.of(this.missionPendingReason)),
-                Case($(), Option::none)
-        );
-    }
+    Mission assignOf(Object resource);
 
-    public Option<RobotTaskId> getScheduledRobotTaskId() {
-        if (this.scheduledRobotTaskId == null) {
-            return Option.none();
-        }
+    Mission pendBy(MissionPendingReason reason);
 
-        return Option.of(this.scheduledRobotTaskId);
-    }
+    Mission executeBy(RobotTaskId robotTaskId);
 
-    public Option<MissionId> getPreMissionId() {
-        if (this.preMissionId == null) {
-            return Option.none();
-        }
+    Mission complete();
 
-        return Option.of(this.preMissionId);
-    }
-
-    Mission becomeReady() {
-        this.missionState = Ready;
-        return this;
-    }
-
-    public Mission pendBy(MissionPendingReason missionPendingReason) {
-        this.missionState = Pending;
-        this.missionPendingReason = missionPendingReason;
-
-        return this;
-    }
-
-    public Mission executeBy(RobotTaskId scheduledRobotTaskId) {
-        this.missionState = Executing;
-        this.scheduledRobotTaskId = scheduledRobotTaskId;
-        return this;
-    }
-
-    public Mission complete() {
-        this.missionState = Completed;
-        return this;
-    }
-
-    public Mission fail() {
-        this.missionState = Failed;
-        return this;
-    }
+    Mission fail();
 
 }

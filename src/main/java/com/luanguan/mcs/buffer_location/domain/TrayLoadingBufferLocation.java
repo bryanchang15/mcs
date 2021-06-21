@@ -17,17 +17,13 @@ import lombok.Value;
 @EqualsAndHashCode(callSuper = false, of = "bufferLocationInformation")
 public class TrayLoadingBufferLocation extends BufferLocation {
 
-    @NonNull
-    BufferLocationInformation bufferLocationInformation;
+    @NonNull BufferLocationInformation bufferLocationInformation;
 
-    @NonNull
-    Version version;
+    @NonNull Version version;
 
-    @NonNull
-    MissionId byMission;
+    @NonNull MissionId byMission;
 
-    @NonNull
-    Integer fullRollNum;
+    @NonNull Integer fullRollNum;
 
     @Override
     public BufferLocation handle(MissionCompleted missionCompleted) {
@@ -36,11 +32,6 @@ public class TrayLoadingBufferLocation extends BufferLocation {
 
     @Override
     public BufferLocation handle(MissionFailed missionFailed) {
-        return new NoTrayBufferLocation(bufferLocationInformation, version);
-    }
-
-    @Override
-    public BufferLocation handle(MissionPended missionPended) {
         return new NoTrayBufferLocation(bufferLocationInformation, version);
     }
 

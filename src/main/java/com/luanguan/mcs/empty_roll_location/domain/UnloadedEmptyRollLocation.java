@@ -1,29 +1,30 @@
 package com.luanguan.mcs.empty_roll_location.domain;
 
+import com.luanguan.mcs.framework.domain.DomainEvent;
 import com.luanguan.mcs.framework.domain.Version;
-import com.luanguan.mcs.mission.domain.MissionEvent;
-import com.luanguan.mcs.mission.domain.MissionId;
-
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.NonNull;
-import lombok.Value;
+import com.luanguan.mcs.mission.domain.MissionEvent.WindingRollerUnloadingMissionScheduled;
+import io.vavr.control.Either;
+import lombok.*;
 
 @Value
 @AllArgsConstructor
-@EqualsAndHashCode(of = "emptyRollLocationInformation")
-public class UnloadedEmptyRollLocation implements EmptyRollLocation {
+@EqualsAndHashCode(of = "emptyRollLocationInformation", callSuper = false)
+public class UnloadedEmptyRollLocation extends EmptyRollLocation {
 
-    @NonNull
-    EmptyRollLocationInformation emptyRollLocationInformation;
+    @NonNull EmptyRollLocationInformation emptyRollLocationInformation;
 
-    @NonNull
-    Version version;
+    @NonNull Version version;
 
-    public LoadingEmptyRollLocation handle(MissionEvent.MissionScheduled missionScheduled) {
-        return new LoadingEmptyRollLocation(emptyRollLocationId, emptyRollLocationPosition, version,
-                missionScheduled.getBatteryModel(), missionScheduled.getElectrodeType,
-                new MissionId(missionScheduled.getMissionId()));
+    public Either<DomainEvent, EmptyRollLocation> handle(
+            WindingRollerUnloadingMissionScheduled missionScheduled
+    ) {
+        return Either.right(new LoadingEmptyRollLocation(
+                emptyRollLocationInformation,
+                version,
+                missionScheduled.batteryModel(),
+                missionScheduled.electrodeType(),
+                missionScheduled.missionId()
+        ));
     }
 
 }

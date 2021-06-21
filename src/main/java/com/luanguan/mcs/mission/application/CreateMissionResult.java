@@ -8,6 +8,6 @@ import java.util.UUID;
 @Value
 public class CreateMissionResult {
 
-    @NonNull UUID missionId;
+    @NonNull Long missionId;
 
 }

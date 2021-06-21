@@ -21,14 +21,17 @@ public class BufferLocationConfig {
     }
 
     @Bean
-    BufferLocationRepository bufferLocationRepository(BufferLocationJpaRepository bufferLocationJpaRepository) {
+    BufferLocationRepository bufferLocationRepository(
+            BufferLocationJpaRepository bufferLocationJpaRepository
+    ) {
         return new BufferLocationRepositoryImpl(bufferLocationJpaRepository);
     }
 
     @Bean
-    MissionEventHandlerSpringEvents missionEventHandlerSpringEvents(MissionEventHandler missionEventHandler) {
+    MissionEventHandlerSpringEvents missionEventHandlerSpringEvents(
+            MissionEventHandler missionEventHandler
+    ) {
         return new MissionEventHandlerSpringEvents(missionEventHandler);
     }
-
 
 }

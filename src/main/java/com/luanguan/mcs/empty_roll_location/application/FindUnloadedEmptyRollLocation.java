@@ -1,12 +1,8 @@
 package com.luanguan.mcs.empty_roll_location.application;
 
-import java.util.Optional;
-
-import com.luanguan.mcs.empty_roll_location.domain.EmptyRollLocationService;
-import com.luanguan.mcs.empty_roll_location.domain.UnloadedEmptyRollLocation;
+import com.luanguan.mcs.empty_roll_location.domain.*;
 import com.luanguan.mcs.shared_kernel.BatteryModel;
 import com.luanguan.mcs.winding_machine.domain.ElectrodeType;
-
 import io.vavr.control.Option;
 import lombok.AllArgsConstructor;
 

@@ -17,41 +17,31 @@ import static io.vavr.API.Match;
 @EqualsAndHashCode(callSuper = false, of = "bufferLocationInformation")
 public class EmptyRollLoadedBufferLocation extends BufferLocation {
 
-    @NonNull
-    BufferLocationInformation bufferLocationInformation;
+    @NonNull BufferLocationInformation bufferLocationInformation;
 
-    @NonNull
-    Version version;
+    @NonNull Version version;
 
-    @NonNull
-    ElectrodeType emptyRollElectrodeType;
+    @NonNull ElectrodeType emptyRollElectrodeType;
 
-    @NonNull
-    Integer emptyRollNum;
+    @NonNull Integer emptyRollNum;
 
     public TrayPosition getTargetTrayPosition() {
         return TrayPosition.Outer;
     }
 
     @Override
-    public Either<DomainEvent, BufferLocation> handle(WindingRollerLoadingMissionScheduled windingRollerLoadingMissionScheduled) {
-        return Either.left(BufferLocationMisMatchedEvent.now(
-                bufferLocationId(),
-                windingRollerLoadingMissionScheduled.missionId()
-        ));
-    }
-
-    @Override
-    public Either<DomainEvent, BufferLocation> handle(BufferLocationEmptyRollLoadingMissionScheduled bufferLocationEmptyRollLoadingMissionScheduled) {
+    public Either<DomainEvent, BufferLocation> handle(
+            BufferLocationRollLoadingMissionScheduled missionScheduled
+    ) {
         return Match(canLoad()).of(
                 Case($(false), () -> Either.left(BufferLocationMisMatchedEvent.now(
-                        bufferLocationId(),
-                        bufferLocationEmptyRollLoadingMissionScheduled.missionId()
+                        getBufferLocationId(),
+                        missionScheduled.missionId()
                 ))),
                 Case($(true), () -> Either.right(new EmptyRollLoadingBufferLocation(
                         bufferLocationInformation,
                         version,
-                        bufferLocationEmptyRollLoadingMissionScheduled.missionId(),
+                        missionScheduled.missionId(),
                         emptyRollElectrodeType,
                         emptyRollNum
                 )))
@@ -59,23 +49,17 @@ public class EmptyRollLoadedBufferLocation extends BufferLocation {
     }
 
     @Override
-    public Either<DomainEvent, BufferLocation> handle(TrayUnloadingTaskScheduled trayUnloadingTaskScheduled) {
+    public Either<DomainEvent, BufferLocation> handle(
+            BufferLocationTrayUnloadingMissionScheduled missionScheduled
+    ) {
         return Either.right(new NoTrayBufferLocation(
                 bufferLocationInformation,
                 version
         ));
     }
 
-    @Override
-    public Either<DomainEvent, BufferLocation> handle(TrayLoadingTaskScheduled trayLoadingTaskScheduled) {
-        return Either.left(BufferLocationMisMatchedEvent.now(
-                bufferLocationId(),
-                trayLoadingTaskScheduled.missionId()
-        ));
-    }
-
     private Boolean canLoad() {
-        return (this.emptyRollNum < this.trayCapacity());
+        return (this.emptyRollNum < this.getTrayCapacity());
     }
 
 }

@@ -19,8 +19,8 @@ public class ScheduleRobotCommandFactory {
                 mission.getSourceWindingRoller()
                         .getElectrodeType().getRollerName(),
                 mission.getSourceWindingRoller().getBatteryModel(),
-                targetEmptyRollLocation.emptyRollRackPosition(),
-                targetEmptyRollLocation.emptyRollLocationPosition()
+                targetEmptyRollLocation.getEmptyRollRackPosition(),
+                targetEmptyRollLocation.getEmptyRollLocationPosition()
         );
     }
 
@@ -29,7 +29,7 @@ public class ScheduleRobotCommandFactory {
             FullRollLoadedBufferLocation sourceBufferLocation
     ) {
         return new ScheduleRobotWindingRollerLoadingCommand(
-                sourceBufferLocation.bufferLocationPosition(),
+                sourceBufferLocation.getBufferLocationPosition(),
                 sourceBufferLocation.getTargetTrayPosition(),
                 mission.getTargetWindingRoller().getWindingMachinePosition(),
                 mission.getTargetWindingRoller().getElectrodeType().getRollerName(),

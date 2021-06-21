@@ -15,9 +15,9 @@ public interface BufferLocationEvent extends DomainEvent {
         return new BufferLocationId(getBufferLocationId());
     }
 
-    UUID getBufferLocationId();
+    Long getBufferLocationId();
 
-    default UUID getAggregateId() {
+    default Long getAggregateId() {
         return getBufferLocationId();
     }
 
@@ -28,7 +28,7 @@ public interface BufferLocationEvent extends DomainEvent {
 
         @NonNull Instant when;
 
-        @NonNull UUID bufferLocationId;
+        @NonNull Long bufferLocationId;
 
         public static BufferLocationEmptied now(BufferLocationId bufferLocationId) {
             return new BufferLocationEmptied(Instant.now(), bufferLocationId.getId());
@@ -43,16 +43,23 @@ public interface BufferLocationEvent extends DomainEvent {
 
         @NonNull Instant when;
 
-        @NonNull UUID bufferLocationId;
+        @NonNull Long bufferLocationId;
 
         @NonNull String batteryModelName;
 
         @NonNull Integer electrodeTypeValue;
 
-        public static BufferLocationLoaded now(BufferLocationId bufferLocationId, BatteryModel batteryModel,
-                                               ElectrodeType electrodeType) {
-            return new BufferLocationLoaded(Instant.now(), bufferLocationId.getId(), batteryModel.getModelName(),
-                    electrodeType.getValue());
+        public static BufferLocationLoaded now(
+                BufferLocationId bufferLocationId,
+                BatteryModel batteryModel,
+                ElectrodeType electrodeType
+        ) {
+            return new BufferLocationLoaded(
+                    Instant.now(),
+                    bufferLocationId.getId(),
+                    batteryModel.getModelName(),
+                    electrodeType.getValue()
+            );
         }
 
         public BatteryModel batteryModel() {

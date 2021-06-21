@@ -15,9 +15,9 @@ public class BufferLocationMisMatchedEvent implements DomainEvent {
 
     @NonNull Instant when;
 
-    @NonNull UUID bufferLocationId;
+    @NonNull Long bufferLocationId;
 
-    @NonNull UUID missionId;
+    @NonNull Long missionId;
 
     public BufferLocationId bufferLocationId() {
         return new BufferLocationId(getBufferLocationId());
@@ -28,12 +28,19 @@ public class BufferLocationMisMatchedEvent implements DomainEvent {
     }
 
     @Override
-    public UUID getAggregateId() {
+    public Long getAggregateId() {
         return getBufferLocationId();
     }
 
-   public static BufferLocationMisMatchedEvent now(BufferLocationId bufferLocationId, MissionId missionId) {
-        return new BufferLocationMisMatchedEvent(Instant.now(), bufferLocationId.getId(), missionId.getId());
+   public static BufferLocationMisMatchedEvent now(
+           BufferLocationId bufferLocationId,
+           MissionId missionId
+   ) {
+        return new BufferLocationMisMatchedEvent(
+                Instant.now(),
+                bufferLocationId.getId(),
+                missionId.getId()
+        );
    }
 
 }
